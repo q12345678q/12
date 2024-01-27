@@ -9,7 +9,7 @@ let userID = 'f3d19529-593d-4b88-80da-7a78f0ab5cdd';
 let proxyIP = 'proxyip.hk.fuck.cloudns.biz';// 小白勿动，该地址并不影响你的网速，这是给CF代理使用的。
 
 //let sub = '';// 留空则显示原版内容
-let sub = '200848a7-a9be-4546-bcc4-79b9bb10304a.cmliucdn.tk';// 内置优选订阅生成器，可自行搭建 https://github.com/cmliu/WorkerVless2sub
+let sub = 'cmcc.cmliucdn.tk';// 内置优选订阅生成器，可自行搭建 https://github.com/cmliu/WorkerVless2sub
 let subconverter = 'api.v1.mk';// clash订阅转换后端，目前使用肥羊的订阅转换功能。支持自建psub 可自行搭建https://github.com/bulianglin/psub
 let subconfig = "https://raw.githubusercontent.com/xbeyond3/cmliu/main/Clash/config/clash.ini"; //订阅配置文件
 // The user name and password do not contain special characters
