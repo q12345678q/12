@@ -16,7 +16,7 @@ let subconfig = "https://raw.githubusercontent.com/cmliu/edgetunnel/main/Clash/c
 // Setting the address will ignore proxyIP
 // Example:  user:pass@host:port  or  host:port
 let socks5Address = '';
-
+let rproxyip = "false";
 if (!isValidUUID(userID)) {
 	throw new Error('uuid is not valid');
 }
@@ -780,7 +780,6 @@ function socks5AddressParser(address) {
  * @returns {Promise<string>}
  */
 async function getVLESSConfig(userID, hostName, sub, userAgent) {
-  const rproxyip = "false";
   if (!proxyIP) rproxyip = "true";
 	// 如果sub为空，则显示原始内容
 	if (!sub) {
