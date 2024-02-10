@@ -784,35 +784,77 @@ function socks5AddressParser(address) {
 async function getVLESSConfig(userID, hostName, sub, userAgent, proxyIP) {
 	if (!proxyIP || proxyIP === '') RproxyIP = "true";
 	// 如果sub为空，则显示原始内容
-	if (!sub) {
-	  const vlessMain = `vless://${userID}@${hostName}:443?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2F%3Fed%3D2048#${hostName}`;
+	if (!sub || sub === '') {
+		const vlessMain = `vless://${userID}@${hostName}:443?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2F%3Fed%3D2048#${hostName}`;
   
-	  return `
-  ################################################################
-  v2ray
-  ---------------------------------------------------------------
-  ${vlessMain}
-  ---------------------------------------------------------------
-  ################################################################
-  clash-meta
-  ---------------------------------------------------------------
-  - type: vless
-	name: ${hostName}
-	server: ${hostName}
-	port: 443
-	uuid: ${userID}
-	network: ws
-	tls: true
-	udp: false
-	sni: ${hostName}
-	client-fingerprint: chrome
-	ws-opts:
-	  path: "/?ed=2048"
-	  headers:
-		host: ${hostName}
-  ---------------------------------------------------------------
-  ################################################################
-  `;
+		return `
+	################################################################
+	v2ray
+	---------------------------------------------------------------
+	${vlessMain}
+	---------------------------------------------------------------
+	################################################################
+	clash-meta
+	---------------------------------------------------------------
+	- type: vless
+	  name: ${hostName}
+	  server: ${hostName}
+	  port: 443
+	  uuid: ${userID}
+	  network: ws
+	  tls: true
+	  udp: false
+	  sni: ${hostName}
+	  client-fingerprint: chrome
+	  ws-opts:
+	    path: "/?ed=2048"
+	    headers:
+		  host: ${hostName}
+	---------------------------------------------------------------
+	################################################################
+	`;
+	} else if (sub && userAgent.includes('mozilla')) {
+		const vlessMain = `vless://${userID}@${hostName}:443?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2F%3Fed%3D2048#${hostName}`;
+	
+		return `
+	################################################################
+	Subscribe / sub
+	响应式订阅链接, 支持 Base64、clash-meta、sing-box 订阅格式, 您的订阅内容由 ${sub} 提供维护支持.
+	---------------------------------------------------------------
+	https://${hostName}/${userID}
+	---------------------------------------------------------------
+	################################################################
+	v2ray
+	---------------------------------------------------------------
+	${vlessMain}
+	---------------------------------------------------------------
+	################################################################
+	clash-meta
+	---------------------------------------------------------------
+	- type: vless
+	  name: ${hostName}
+	  server: ${hostName}
+	  port: 443
+	  uuid: ${userID}
+	  network: ws
+	  tls: true
+	  udp: false
+	  sni: ${hostName}
+	  client-fingerprint: chrome
+	  ws-opts:
+		path: "/?ed=2048"
+		headers:
+		  host: ${hostName}
+	---------------------------------------------------------------
+	################################################################
+	telegram 交流群 技术大佬~在线发牌!
+	https://t.me/CMLiussss
+	---------------------------------------------------------------
+	github 项目地址 Star!Star!Star!!!
+	https://github.com/cmliu/edgetunnel
+	---------------------------------------------------------------
+	################################################################
+	`;
 	} else if (sub && userAgent.includes('clash')) {
 	  // 如果sub不为空且UA为clash，则发起特定请求
 	  	if (typeof fetch === 'function') {
