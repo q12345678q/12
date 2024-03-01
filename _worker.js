@@ -4,14 +4,14 @@ import { connect } from 'cloudflare:sockets';
 
 // How to generate your own UUID:
 // [Windows] Press "Win + R", input cmd and run:  Powershell -NoExit -Command "[guid]::NewGuid()"
-let userID = '90cd4a77-141a-43c9-991b-08263cfe9c10';
+let userID = 'ba5cb3a5-9e52-4309-b49e-be84e8c05fd8';
 
 let proxyIP = '';// 小白勿动，该地址并不影响你的网速，这是给CF代理使用的。'cdn.xn--b6gac.eu.org', 'cdn-all.xn--b6gac.eu.org', 'edgetunnel.anycast.eu.org'
 
 //let sub = '';// 留空则显示原版内容
-let sub = 'sub.cmliussss.workers.dev';// 内置优选订阅生成器，可自行搭建 https://github.com/cmliu/WorkerVless2sub
-let subconverter = 'api.v1.mk';// clash订阅转换后端，目前使用肥羊的订阅转换功能。支持自建psub 可自行搭建https://github.com/bulianglin/psub
-let subconfig = "https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/config/ACL4SSR_Online_Full_MultiMode.ini"; //订阅配置文件
+let sub = 'sub.cmliussss.workers.dev';// 内置优选订阅生成器，可自行搭建 https://github.com/zhukings/WorkerVless2sub
+let subconverter = 'psub.zhukings.workers.dev';// clash订阅转换后端，目前使用肥羊的订阅转换功能。支持自建psub 可自行搭建https://github.com/bulianglin/psub
+let subconfig = "https://raw.githubusercontent.com/zhukings/ACL4SSR_CF/main/config/ACL4SSR.ini"; //订阅配置文件
 // The user name and password do not contain special characters
 // Setting the address will ignore proxyIP
 // Example:  user:pass@host:port  or  host:port
@@ -849,10 +849,10 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 	---------------------------------------------------------------
 	################################################################
 	telegram 交流群 技术大佬~在线发牌!
-	https://t.me/CMLiussss
+	https://t.me/zhukingsssss
 	---------------------------------------------------------------
 	github 项目地址 Star!Star!Star!!!
-	https://github.com/cmliu/edgetunnel
+	https://github.com/zhukings/edgetunnel
 	---------------------------------------------------------------
 	################################################################
 	`;
@@ -860,7 +860,7 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 	  // 如果sub不为空且UA为clash，则发起特定请求
 	  	if (typeof fetch === 'function') {
 			try {
-				const response = await fetch(`https://${subconverter}/sub?target=clash&url=https%3A%2F%2F${sub}%2Fsub%3Fhost%3D${hostName}%26uuid%3D${userID}%26edgetunnel%3Dcmliu%26proxyip%3D${RproxyIP}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=false&fdn=false&sort=false&new_name=true`);
+				const response = await fetch(`https://${subconverter}/sub?target=clash&url=https%3A%2F%2F${sub}%2Fsub%3Fhost%3D${hostName}%26uuid%3D${userID}%26edgetunnel%3Dzhukings%26proxyip%3D${RproxyIP}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=false&fdn=false&sort=false&new_name=true`);
 				const content = await response.text();
 				return content;
 			} catch (error) {
@@ -874,7 +874,7 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 		// 如果sub不为空且UA为sing-box，则发起特定请求
 		if (typeof fetch === 'function') {
 			try {
-				const response = await fetch(`https://${subconverter}/sub?target=singbox&url=https%3A%2F%2F${sub}%2Fsub%3Fhost%3D${hostName}%26uuid%3D${userID}%26edgetunnel%3Dcmliu%26proxyip%3D${RproxyIP}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=false&fdn=false&sort=false&new_name=true`);
+				const response = await fetch(`https://${subconverter}/sub?target=singbox&url=https%3A%2F%2F${sub}%2Fsub%3Fhost%3D${hostName}%26uuid%3D${userID}%26edgetunnel%3Dzhukings%26proxyip%3D${RproxyIP}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=false&fdn=false&sort=false&new_name=true`);
 				const content = await response.text();
 				return content;
 			} catch (error) {
@@ -888,7 +888,7 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 	  	// 如果sub不为空且UA，则发起一般请求
 	  	if (typeof fetch === 'function') {
 			try {
-		  		const response = await fetch(`https://${sub}/sub?host=${hostName}&uuid=${userID}&edgetunnel=cmliu&proxyip=${RproxyIP}`);
+		  		const response = await fetch(`https://${sub}/sub?host=${hostName}&uuid=${userID}&edgetunnel=zhukings&proxyip=${RproxyIP}`);
 		  		const content = await response.text();
 		  		return content;
 			} catch (error) {
