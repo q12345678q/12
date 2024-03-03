@@ -875,7 +875,7 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 		// 如果sub不为空且UA为sing-box，则发起特定请求
 		if (typeof fetch === 'function') {
 			try {
-				const response = await fetch(`https://${subconverter}/sub?target=singbox&url=https%3A%2F%2F${sub}%2Fsub%3Fhost%3D${hostName}%26uuid%3D${userID}%26edgetunnel%3Dcmliu%26proxyip%3D${RproxyIP}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=false&fdn=false&sort=false&new_name=true`);
+				const response = await fetch(`https://${subconverter}/sub?target=singbox&url=https%3A%2F%2F${sub}%2Fsub%3Fhost%3D${hostName}%26uuid%3D${userID}%26edgetunnel%3Dcmliu%26proxyip%3D${RproxyIP}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=false&fdn=false&singbox.ipv6=1&sort=false&new_name=true`);
 				const content = await response.text();
 				return content;
 			} catch (error) {
