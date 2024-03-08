@@ -71,24 +71,24 @@ export default {
 					const timestamp = Math.floor(now / 1000);
 					const today = new Date(now);
 					today.setHours(0, 0, 0, 0);
-          if (userAgent && userAgent.includes('mozilla')){
-            return new Response(`${vlessConfig}`, {
-              status: 200,
-              headers: {
-                "Content-Type": "text/plain;charset=utf-8",
-              }
-            });
-          } else {
-            return new Response(`${vlessConfig}`, {
-              status: 200,
-              headers: {
-                "Content-Disposition": "attachment; filename=edgetunnel; filename*=utf-8''edgetunnel",
-                "Content-Type": "text/plain;charset=utf-8",
-                "Profile-Update-Interval": "6",
-                "Subscription-Userinfo": `upload=0; download=${Math.floor(((now - today.getTime())/86400000) * 24 * 1099511627776)}; total=${24 * 1099511627776}; expire=${timestamp}`,
-              }
-            });
-          }
+					if (userAgent && userAgent.includes('mozilla')){
+						return new Response(`${vlessConfig}`, {
+							status: 200,
+							headers: {
+								"Content-Type": "text/plain;charset=utf-8",
+							}
+						});
+					} else {
+						return new Response(`${vlessConfig}`, {
+							status: 200,
+							headers: {
+								"Content-Disposition": "attachment; filename=edgetunnel; filename*=utf-8''edgetunnel",
+								"Content-Type": "text/plain;charset=utf-8",
+								"Profile-Update-Interval": "6",
+								"Subscription-Userinfo": `upload=0; download=${Math.floor(((now - today.getTime())/86400000) * 24 * 1099511627776)}; total=${24 * 1099511627776}; expire=${timestamp}`,
+							}
+						});
+					}
 				}
 				default:
 					return new Response('Not found', { status: 404 });
@@ -819,7 +819,7 @@ function generateRandomString() {
 	let characters = 'abcdefghijklmnopqrstuvwxyz';
 	let result = '';
 	for (let i = 0; i < length; i++) {
-	  result += characters[Math.floor(Math.random() * characters.length)];
+		result += characters[Math.floor(Math.random() * characters.length)];
 	}
 	return result;
 }
@@ -827,12 +827,12 @@ function generateRandomString() {
 function generateUUID() {
 	let uuid = '';
 	for (let i = 0; i < 32; i++) {
-	  let num = Math.floor(Math.random() * 16);
-	  if (num < 10) {
-		uuid += num;
-	  } else {
-		uuid += String.fromCharCode(num + 55);
-	  }
+		let num = Math.floor(Math.random() * 16);
+		if (num < 10) {
+			uuid += num;
+		} else {
+			uuid += String.fromCharCode(num + 55);
+		}
 	}
 	return uuid.replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5').toLowerCase();
 }
