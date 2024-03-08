@@ -71,13 +71,24 @@ export default {
 					const timestamp = Math.floor(now / 1000);
 					const today = new Date(now);
 					today.setHours(0, 0, 0, 0);
-					return new Response(`${vlessConfig}`, {
-					status: 200,
-					headers: {
-						"Content-Type": "text/plain;charset=utf-8",
-						"Subscription-Userinfo": `upload=0; download=${Math.floor(((now - today.getTime())/86400000) * 24 * 1099511627776)}; total=${24 * 1099511627776}; expire=${timestamp}`,
-					}
-					});
+          if (userAgent && userAgent.includes('mozilla')){
+            return new Response(`${vlessConfig}`, {
+              status: 200,
+              headers: {
+                "Content-Type": "text/plain;charset=utf-8",
+              }
+            });
+          } else {
+            return new Response(`${vlessConfig}`, {
+              status: 200,
+              headers: {
+                "Content-Disposition": "attachment; filename=edgetunnel; filename*=utf-8''edgetunnel",
+                "Content-Type": "text/plain;charset=utf-8",
+                "Profile-Update-Interval": "6",
+                "Subscription-Userinfo": `upload=0; download=${Math.floor(((now - today.getTime())/86400000) * 24 * 1099511627776)}; total=${24 * 1099511627776}; expire=${timestamp}`,
+              }
+            });
+          }
 				}
 				default:
 					return new Response('Not found', { status: 404 });
@@ -919,9 +930,9 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 		let url = "";
 		let isBase64 = false;
 		if (userAgent.includes('clash')) {
-			url = `https://${subconverter}/sub?target=clash&url=https%3A%2F%2F${sub}%2Fsub%3Fhost%3D${fakeHostName}%26uuid%3D${fakeUserID}%26edgetunnel%3Dcmliu%26proxyip%3D${RproxyIP}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=false&fdn=false&sort=false&new_name=true`;
+			url = `https://${subconverter}/sub?target=clash&url=https%3A%2F%2F${sub}%2Fsub%3Fhost%3D${fakeHostName}%26uuid%3D${fakeUserID}%26edgetunnel%3Dcmliu%26proxyip%3D${RproxyIP}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
 		} else if (userAgent.includes('sing-box') || userAgent.includes('singbox')) {
-			url = `https://${subconverter}/sub?target=singbox&url=https%3A%2F%2F${sub}%2Fsub%3Fhost%3D${fakeHostName}%26uuid%3D${fakeUserID}%26edgetunnel%3Dcmliu%26proxyip%3D${RproxyIP}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=false&fdn=false&sort=false&new_name=true`;
+			url = `https://${subconverter}/sub?target=singbox&url=https%3A%2F%2F${sub}%2Fsub%3Fhost%3D${fakeHostName}%26uuid%3D${fakeUserID}%26edgetunnel%3Dcmliu%26proxyip%3D${RproxyIP}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
 		} else {
 			url = `https://${sub}/sub?host=${fakeHostName}&uuid=${fakeUserID}&edgetunnel=cmliu&proxyip=${RproxyIP}`;
 			isBase64 = true;
