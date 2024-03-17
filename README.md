@@ -37,8 +37,8 @@ Telegram交流群：[@CMLiussss](https://t.me/CMLiussss)
    - 将第 7 行 `userID` 修改成你自己的 **UUID** 。
 
 2. 访问订阅内容：
-   - 访问 `https://[YOUR-WORKERS-URL]/[UUID]` 即可获取订阅内容。
-   - 例如 `https://vless.google.workers.dev/90cd4a77-141a-43c9-991b-08263cfe9c10` 就是你的订阅地址。
+   - 访问 `https://[YOUR-WORKERS-URL]/[UUID]` 或 `https://[YOUR-WORKERS-URL]/sub/[UUID]` 即可获取订阅内容。
+   - 例如 `https://vless.google.workers.dev/90cd4a77-141a-43c9-991b-08263cfe9c10` 或 `https://vless.google.workers.dev/sub/90cd4a77-141a-43c9-991b-08263cfe9c10` 就是你的订阅地址。
 
 3. 给 workers绑定 自定义域： 
    - 在 workers控制台的 `触发器`选项卡，下方点击 `添加自定义域`。
@@ -64,8 +64,8 @@ Telegram交流群：[@CMLiussss](https://t.me/CMLiussss)
    - 返回 `部署` 选项卡，在右下角点击 `创建新部署` 后，重新上传 [worker.zip](https://raw.githubusercontent.com/cmliu/edgetunnel/main/worker.zip) 文件后点击 `保存并部署` 即可。
 
 2. 访问订阅内容：
-   - 访问 `https://[YOUR-PAGES-URL]/[YOUR-UUID]` 即可获取订阅内容。
-   - 例如 `https://edgetunnel.pages.dev/90cd4a77-141a-43c9-991b-08263cfe9c10` 就是你的订阅地址。
+   - 访问 `https://[YOUR-PAGES-URL]/[YOUR-UUID]` 或 `https://[YOUR-PAGES-URL]/sub/[YOUR-UUID]` 即可获取订阅内容。
+   - 例如 `https://edgetunnel.pages.dev/90cd4a77-141a-43c9-991b-08263cfe9c10` 或 `https://edgetunnel.pages.dev/sub/90cd4a77-141a-43c9-991b-08263cfe9c10` 就是你的订阅地址。
 
 <details>
 <summary><code><strong>「 我自己有域名！我要绑定自己的域名！我已经熟练的掌握域名解析！ 」</strong></code></summary>
@@ -98,8 +98,8 @@ Telegram交流群：[@CMLiussss](https://t.me/CMLiussss)
      变量名称填写**UUID**，值则为你的UUID，后点击 `保存并部署`即可。
 
 2. 访问订阅内容：
-   - 访问 `https://[YOUR-PAGES-URL]/[YOUR-UUID]` 即可获取订阅内容。
-   - 例如 `https://edgetunnel.pages.dev/90cd4a77-141a-43c9-991b-08263cfe9c10` 就是你的订阅地址。
+   - 访问 `https://[YOUR-PAGES-URL]/[YOUR-UUID]` 或 `https://[YOUR-PAGES-URL]/sub/[YOUR-UUID]` 即可获取订阅内容。
+   - 例如 `https://edgetunnel.pages.dev/90cd4a77-141a-43c9-991b-08263cfe9c10` 或 `https://edgetunnel.pages.dev/sub/90cd4a77-141a-43c9-991b-08263cfe9c10`就是你的订阅地址。
 
 3. 给 Pages绑定 CNAME自定义域：[视频教程](https://www.youtube.com/watch?v=LeT4jQUh8ok&t=851s)
    - 在 Pages控制台的 `自定义域`选项卡，下方点击 `设置自定义域`。
