@@ -1,12 +1,12 @@
-name = "edgetunnel"               # todo
+name = "edgetunnel"
 main = "./_worker.js"
 compatibility_date = "2022-10-10"
 
 # Set environment variables for your build script here.
 # [Docs](https://developers.cloudflare.com/workers/configuration/environment-variables/#add-environment-variables-via-wrangler)
-#[vars]
+[vars]
 #UUID=""
-#PROXYIP=""
+#PROXYIP = ""
 #SOCKS5=""
 #SUB=""
 #SUBAPI=""

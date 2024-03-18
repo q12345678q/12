@@ -1,7 +1,7 @@
 {
 	"scripts": {
-		"deploy": "wrangler deploy index.js",
-		"dev": "wrangler dev index.js"
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev"
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20240314.0",
