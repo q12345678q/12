@@ -941,7 +941,9 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 				'User-Agent': 'CF-Workers-edgetunnel/cmliu'
 			}});
 			content = await response.text();
-			return revertFakeInfo(content, userID, hostName, isBase64);
+			let pattern = /加入我的频道t.me\/CMLiussss解锁更多优选节点/g;
+			let result = content.replace(pattern, '');
+			return revertFakeInfo(result, userID, hostName, isBase64);
 		} catch (error) {
 			console.error('Error fetching content:', error);
 			return `Error fetching content: ${error.message}`;
