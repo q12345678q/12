@@ -801,11 +801,9 @@ function socks5AddressParser(address) {
 function revertFakeInfo(content, userID, hostName, isBase64) {
 	if (isBase64) content = atob(content);//Base64解码
 	content = content.replace(new RegExp(fakeUserID, 'g'), userID).replace(new RegExp(fakeHostName, 'g'), hostName);
-	let pattern = /加入我的频道t.me\/CMLiussss解锁更多优选节点/g;
-	let result = content.replace(pattern, '');
-	if (isBase64) result = btoa(result);//Base64编码
+	if (isBase64) content = btoa(content);//Base64编码
 
-	return result;
+	return content;
 }
 
 function generateRandomNumber() {
