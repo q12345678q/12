@@ -120,6 +120,45 @@ Telegram交流群：[@CMLiussss](https://t.me/CMLiussss)
 
 </details>
 
+## GitHub Actions 自动部署 Cloudflare Workers 方法
+1. 获取 Cloudflare API Token
+   - 登录 Cloudflare 在我的个人资料中找到 API 令牌。
+   - 点击 `创建令牌`，选择 `编辑 Cloudflare Workers` 并点击 `使用模板`。
+   - `帐户资源`部分设置为**包括所有用户**。
+   - `区域资源`部分设置为**包括所有区域**。
+   - 点击`继续以显示摘要`，再点击`创建令牌`。
+   - 复制出形如`jyfmt9TXU9xdg9090909092222JnxVfTgtUjCfiAbXI`的令牌，此令牌只显示一次，请保存好！
+
+2. GitHub 中添加 `Cloudflare API 令牌` 的环境变量：
+   - 在 Github 上先 Fork 本项目，并点上 Star !!!
+   - 在自己 Fork 的仓库设置（settings）中找到 `Security - Secrets and variables - Actions` 页面。
+   - 点击 `New repository secret` 创建 `Name` 为 **CF_API_TOKEN**、`Secret` 为之前生成的 Cloudflare API Token 的 secret。
+
+3. 之后可以借助 [Pull](https://wei.github.io/pull)自动更新上游仓库更新，每次更新后自动部署到 Cloudflare Workers 
+   
+4. 设置 Cloudflare Workers 环境变量：
+   - 完成部署 Cloudflare Workers 后，可以找到名为 `edgetunnel` 的同名 Worker。
+   - 在 `edgetunnel` 的`设置 - 变量`中添加名为 `UUID` 的环境变量，并设置为自己的 **UUID**。
+
+5. 访问订阅内容：
+   - 访问 `https://[YOUR-WORKERS-URL]/[UUID]` 即可获取订阅内容。
+   - 例如 `https://vless.google.workers.dev/90cd4a77-141a-43c9-991b-08263cfe9c10` 就是你的订阅地址。
+
+6. 给 workers绑定 自定义域： 
+   - 在 workers控制台的 `触发器`选项卡，下方点击 `添加自定义域`。
+   - 填入你已转入 CloudFlare 域名解析服务的次级域名，例如:`vless.google.com`后 点击`添加自定义域`，等待证书生效即可。
+   - **如果你是小白，你现在可以直接起飞，不用再往下看了！！！**
+
+<details>
+<summary><code><strong>「 我不是小白！我真的真的不是小白！我要玩花活！我要开启高端玩法！ 」</strong></code></summary>
+
+7. 使用自己的`优选域名`/`优选IP`的订阅内容：
+   - 如果你想使用自己的优选域名或者是自己的优选IP，可以参考 [WorkerVless2sub GitHub 仓库](https://github.com/cmliu/WorkerVless2sub) 中的部署说明自行搭建。
+   - 打开 [worker.js](https://github.com/cmliu/edgetunnel/blob/main/_worker.js) 文件，在第 12 行找到 `sub` 变量，将其修改为你部署的订阅生成器地址。例如 `let sub = 'sub.cmliussss.workers.dev';`，注意不要带https等协议信息和符号。
+   - 注意，如果您使用了自己的订阅地址，要求订阅生成器的 `sub`域名 和 `[YOUR-WORKER-URL]`的域名 不同属一个顶级域名，否则会出现异常。您可以在 `sub` 变量赋值为 workers.dev 分配到的域名。
+
+</details>
+
 ### 变量说明
 | 变量名 | 示例 | 备注 | YT |
 |--------|---------|-----|-----|
