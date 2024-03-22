@@ -1,0 +1,7 @@
+name = "edgetunnel"
+type = "javascript"
+main = "_worker.js"
+compatibility_date = "2024-03-22"
+
+[placement]
+mode = "smart"
