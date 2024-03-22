@@ -27,7 +27,7 @@ let enableSocks = false;
 // 虚假uuid和hostname，用于发送给配置生成服务
 let fakeUserID = generateUUID();
 let fakeHostName = generateRandomString();
-
+let tls = true;
 export default {
 	/**
 	 * @param {import("@cloudflare/workers-types").Request} request
@@ -38,13 +38,13 @@ export default {
 	async fetch(request, env, ctx) {
 		try {
 			const userAgent = request.headers.get('User-Agent').toLowerCase();
-			userID = env.UUID || userID;
+			userID = (env.UUID || userID).toLowerCase();
 			proxyIP = env.PROXYIP || proxyIP;
 			socks5Address = env.SOCKS5 || socks5Address;
 			sub = env.SUB || sub;
 			subconverter = env.SUBAPI || subconverter;
 			subconfig = env.SUBCONFIG || subconfig;
-			//RproxyIP = env.RPROXYIP || !proxyIP ? 'true' : 'false';
+
 			if (socks5Address) {
 				RproxyIP = env.RPROXYIP || 'false';
 				try {
@@ -60,9 +60,10 @@ export default {
 			}
 			const upgradeHeader = request.headers.get('Upgrade');
 			const url = new URL(request.url);
+			if (url.searchParams.has('notls')) tls = false;
 			if (!upgradeHeader || upgradeHeader !== 'websocket') {
 				// const url = new URL(request.url);
-				switch (url.pathname) {
+				switch (url.pathname.toLowerCase()) {
 				case '/':
 					return new Response(JSON.stringify(request.cf), { status: 200 });
 				case `/${userID}`: {
@@ -925,8 +926,8 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 			fakeHostName = `${fakeHostName}.${generateRandomString()}${generateRandomNumber()}.workers.dev`;
 		} else if (hostName.includes(".pages.dev")){
 			fakeHostName = `${fakeHostName}.${generateRandomString()}${generateRandomNumber()}.pages.dev`;
-		} else if (hostName.includes("worker")){
-			fakeHostName = `worker.${fakeHostName}${generateRandomNumber()}.net`;
+		} else if (hostName.includes("worker") || hostName.includes("notls") || tls == false){
+			fakeHostName = `notls.${fakeHostName}${generateRandomNumber()}.net`;
 		} else {
 			fakeHostName = `${fakeHostName}.${generateRandomNumber()}.xyz`
 		}
