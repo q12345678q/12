@@ -56,8 +56,8 @@ export default {
 				}
 			} else {
 				RproxyIP = env.RPROXYIP || !proxyIP ? 'true' : 'false';
-				proxyIP = proxyIP.replace(" ", "");
 				if (proxyIP.includes(',')) proxyIP = proxyIP.split(",")[Math.floor(Math.random() * proxyIP.split(",").length)];
+				while(proxyIP.includes(' ')) proxyIP = proxyIP.replace(' ', '');
 				//console.log(proxyIP);
 			}
 			const upgradeHeader = request.headers.get('Upgrade');
