@@ -96,6 +96,20 @@ export default {
 					}
 				}
 				default:
+					//remove / from pathname
+					const uuidStr = url.pathname.substring(1);
+					//check if a valid uuid
+
+					if (!isValidUUID(uuidStr)) {
+						return new Response('Your request path is not valid', { status: 404 });
+					}
+					//check if user have a valid v2board subscription after sub expiration within 16days
+					const validUserExpiredTime = await env.V2BoardXUUIDS.get(uuidStr);
+					if (!validUserExpiredTime){
+						return new Response('You dont have permission to use,due to subscription expired for more than 16 days', { status: 401 });
+
+					}
+
 					return new Response('Not found', { status: 404 });
 				}
 			} else {
@@ -852,7 +866,7 @@ function generateUUID() {
 async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 	// 如果sub为空，则显示原始内容
 	if (!sub || sub === '') {
-		const vlessMain = `vless://${userID}@${hostName}:443?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2Ffireinrain#${hostName}`;
+		const vlessMain = `vless://${userID}@${hostName}:443?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2Ffireinrain%3Fed%3D2048#${hostName}`;
   
 		return `
 	################################################################
@@ -874,14 +888,14 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 	  sni: ${hostName}
 	  client-fingerprint: chrome
 	  ws-opts:
-	    path: "/fireinrain"
+	    path: "/fireinrain?ed=2048"
 	    headers:
 		  host: ${hostName}
 	---------------------------------------------------------------
 	################################################################
 	`;
 	} else if (sub && userAgent.includes('mozilla') && !userAgent.includes('linux x86')) {
-		const vlessMain = `vless://${userID}@${hostName}:443?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2Ffireinrain#${hostName}`;
+		const vlessMain = `vless://${userID}@${hostName}:443?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2Ffireinrain%3Fed%3D2048#${hostName}`;
 	
 		return `
 	################################################################
@@ -908,7 +922,7 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 	  sni: ${hostName}
 	  client-fingerprint: chrome
 	  ws-opts:
-		path: "/fireinrain"
+		path: "/fireinrain?ed=2048"
 		headers:
 		  host: ${hostName}
 	---------------------------------------------------------------
