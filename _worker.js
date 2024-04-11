@@ -16,7 +16,7 @@ let subconfig = "https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/conf
 // Setting the address will ignore proxyIP
 // Example:  user:pass@host:port  or  host:port
 let socks5Address = '';
-let RproxyIP = 'false';
+let RproxyIP = 'true';
 if (!isValidUUID(userID)) {
 	throw new Error('uuid is not valid');
 }
