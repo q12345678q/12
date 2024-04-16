@@ -1,0 +1,6 @@
+name = "new_worker_name"
+main = "_worker.js"
+compatibility_date = "2023-05-26"
+
+[vars]
+UUID = "6c1964a8-5af6-4be2-9d2f-c87a25fe4852"
