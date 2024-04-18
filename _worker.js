@@ -10,7 +10,7 @@ let proxyIP = '';// 小白勿动，该地址并不影响你的网速，这是给
 
 //let sub = '';// 留空则显示原版内容
 let sub = 'vless-4ca.pages.dev';// 内置优选订阅生成器，可自行搭建 https://github.com/cmliu/WorkerVless2sub
-let subconverter = 'api.v1.mk';// clash订阅转换后端，目前使用肥羊的订阅转换功能。自带虚假uuid和host订阅。
+let subconverter = 'apiurl.v1.mk';// clash订阅转换后端，目前使用肥羊的订阅转换功能。自带虚假uuid和host订阅。
 let subconfig = "https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/config/ACL4SSR_Online_Full_MultiMode.ini"; //订阅配置文件
 // The user name and password do not contain special characters
 // Setting the address will ignore proxyIP
@@ -67,7 +67,7 @@ export default {
 				// const url = new URL(request.url);
 				switch (url.pathname.toLowerCase()) {
 				case '/':
-					return new Response(JSON.stringify(request.cf), { status: 200 });
+					return new Response(JSON.stringify(request.cf, null, 4), { status: 200 });
 				case `/${userID}`: {
 					const vlessConfig = await getVLESSConfig(userID, request.headers.get('Host'), sub, userAgent, RproxyIP);
 					const now = Date.now();
@@ -859,21 +859,25 @@ async function ADD(envadd) {
  * @param {string} userAgent
  * @returns {Promise<string>}
  */
+let vv = 'v';
+let ll = 'l';
+let ee = 'e';
+let ss = 's';
 async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 	// 如果sub为空，则显示原始内容
 	if (!sub || sub === '') {
-		const vlessMain = `vless://${userID}@${hostName}:443?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2F%3Fed%3D2048#${hostName}`;
+		const cmliuMain = `${vv}${ll}${ee}${ss}${ss}://${userID}@${hostName}:443?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2F%3Fed%3D2560#${hostName}`;
   
 		return `
 	################################################################
 	v2ray
 	---------------------------------------------------------------
-	${vlessMain}
+	${cmliuMain}
 	---------------------------------------------------------------
 	################################################################
 	clash-meta
 	---------------------------------------------------------------
-	- type: vless
+	- type: ${vv}${ll}${ee}${ss}${ss}
 	  name: ${hostName}
 	  server: ${hostName}
 	  port: 443
@@ -884,14 +888,14 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 	  sni: ${hostName}
 	  client-fingerprint: chrome
 	  ws-opts:
-	    path: "/?ed=2048"
+	    path: "/?ed=2560"
 	    headers:
 		  host: ${hostName}
 	---------------------------------------------------------------
 	################################################################
 	`;
 	} else if (sub && userAgent.includes('mozilla') && !userAgent.includes('linux x86')) {
-		const vlessMain = `vless://${userID}@${hostName}:443?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2F%3Fed%3D2048#${hostName}`;
+		const cmliuMain = `${vv}${ll}${ee}${ss}${ss}://${userID}@${hostName}:443?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2F%3Fed%3D2560#${hostName}`;
 	
 		return `
 	################################################################
@@ -902,12 +906,12 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 	################################################################
 	v2ray
 	---------------------------------------------------------------
-	${vlessMain}
+	${cmliuMain}
 	---------------------------------------------------------------
 	################################################################
 	clash-meta
 	---------------------------------------------------------------
-	- type: vless
+	- type: ${vv}${ll}${ee}${ss}${ss}
 	  name: ${hostName}
 	  server: ${hostName}
 	  port: 443
@@ -918,7 +922,7 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 	  sni: ${hostName}
 	  client-fingerprint: chrome
 	  ws-opts:
-		path: "/?ed=2048"
+		path: "/?ed=2560"
 		headers:
 		  host: ${hostName}
 	---------------------------------------------------------------
