@@ -3,7 +3,7 @@
 import { connect } from 'cloudflare:sockets';
 
 // How to generate your own UUID:
-// [Windows] Press "Win + R", input cmd and run:  Powershell -NoExit -Command "[guid]::NewGuid()"
+// [Windows] Press "Win + R", input cmd and run:	Powershell -NoExit -Command "[guid]::NewGuid()"
 let userID = '90cd4a77-141a-43c9-991b-08263cfe9c10';
 
 let proxyIP = '';// 小白勿动，该地址并不影响你的网速，这是给CF代理使用的。'cdn.xn--b6gac.eu.org, cdn-all.xn--b6gac.eu.org, workers.cloudflare.cyou'
@@ -14,7 +14,7 @@ let subconverter = 'apiurl.v1.mk';// clash订阅转换后端，目前使用肥�
 let subconfig = "https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/config/ACL4SSR_Online_Full_MultiMode.ini"; //订阅配置文件
 // The user name and password do not contain special characters
 // Setting the address will ignore proxyIP
-// Example:  user:pass@host:port  or  host:port
+// Example:	user:pass@host:port	or	host:port
 let socks5Address = '';
 let RproxyIP = 'false';
 if (!isValidUUID(userID)) {
@@ -53,7 +53,7 @@ export default {
 					parsedSocks5Address = socks5AddressParser(socks5Address);
 					enableSocks = true;
 				} catch (err) {
-  			/** @type {Error} */ let e = err;
+				/** @type {Error} */ let e = err;
 					console.log(e.toString());
 					enableSocks = false;
 				}
@@ -389,9 +389,9 @@ function processVlessHeader(
 		vlessBuffer.slice(addressIndex, addressIndex + 1)
 	);
 
-	// 1--> ipv4  addressLength =4
+	// 1--> ipv4	addressLength =4
 	// 2--> domain name addressLength=addressBuffer[1]
-	// 3--> ipv6  addressLength =16
+	// 3--> ipv6	addressLength =16
 	const addressType = addressBuffer[0];
 	let addressLength = 0;
 	let addressValueIndex = addressIndex + 1;
@@ -428,7 +428,7 @@ function processVlessHeader(
 		default:
 			return {
 				hasError: true,
-				message: `invild  addressType is ${addressType}`,
+				message: `invild	addressType is ${addressType}`,
 			};
 	}
 	if (!addressValue) {
@@ -489,7 +489,7 @@ async function remoteSocketToWS(remoteSocket, webSocket, vlessResponseHeader, re
 					} else {
 						// seems no need rate limit this, CF seems fix this??..
 						// if (remoteChunkCount > 20000) {
-						// 	// cf one package is 4096 byte(4kb),  4096 * 20000 = 80M
+						// 	// cf one package is 4096 byte(4kb),	4096 * 20000 = 80M
 						// 	await delay(1);
 						// }
 						webSocket.send(chunk);
@@ -648,9 +648,9 @@ async function socks5Connect(addressType, addressRemote, portRemote, log) {
 
 	// Request head format (Worker -> Socks Server):
 	// +----+----------+----------+
-	// |VER | NMETHODS | METHODS  |
+	// |VER | NMETHODS | METHODS	|
 	// +----+----------+----------+
-	// | 1  |    1     | 1 to 255 |
+	// | 1	|		1		 | 1 to 255 |
 	// +----+----------+----------+
 
 	// https://en.wikipedia.org/wiki/SOCKS#SOCKS5
@@ -671,7 +671,7 @@ async function socks5Connect(addressType, addressRemote, portRemote, log) {
 	// +----+--------+
 	// |VER | METHOD |
 	// +----+--------+
-	// | 1  |   1    |
+	// | 1	|	 1		|
 	// +----+--------+
 	if (res[0] !== 0x05) {
 		log(`socks server version error: ${res[0]} expected: 5`);
@@ -690,9 +690,9 @@ async function socks5Connect(addressType, addressRemote, portRemote, log) {
 			return;
 		}
 		// +----+------+----------+------+----------+
-		// |VER | ULEN |  UNAME   | PLEN |  PASSWD  |
+		// |VER | ULEN |	UNAME	 | PLEN |	PASSWD	|
 		// +----+------+----------+------+----------+
-		// | 1  |  1   | 1 to 255 |  1   | 1 to 255 |
+		// | 1	|	1	 | 1 to 255 |	1	 | 1 to 255 |
 		// +----+------+----------+------+----------+
 		const authRequest = new Uint8Array([
 			1,
@@ -712,9 +712,9 @@ async function socks5Connect(addressType, addressRemote, portRemote, log) {
 
 	// Request data format (Worker -> Socks Server):
 	// +----+-----+-------+------+----------+----------+
-	// |VER | CMD |  RSV  | ATYP | DST.ADDR | DST.PORT |
+	// |VER | CMD |	RSV	| ATYP | DST.ADDR | DST.PORT |
 	// +----+-----+-------+------+----------+----------+
-	// | 1  |  1  | X'00' |  1   | Variable |    2     |
+	// | 1	|	1	| X'00' |	1	 | Variable |		2		 |
 	// +----+-----+-------+------+----------+----------+
 	// ATYP: address type of following address
 	// 0x01: IPv4 address
@@ -724,9 +724,9 @@ async function socks5Connect(addressType, addressRemote, portRemote, log) {
 	// DST.PORT: desired destination port in network octet order
 
 	// addressType
-	// 1--> ipv4  addressLength =4
+	// 1--> ipv4	addressLength =4
 	// 2--> domain name
-	// 3--> ipv6  addressLength =16
+	// 3--> ipv6	addressLength =16
 	let DSTADDR;	// DSTADDR = ATYP + DST.ADDR
 	switch (addressType) {
 		case 1:
@@ -745,7 +745,7 @@ async function socks5Connect(addressType, addressRemote, portRemote, log) {
 			);
 			break;
 		default:
-			log(`invild  addressType is ${addressType}`);
+			log(`invild	addressType is ${addressType}`);
 			return;
 	}
 	const socksRequest = new Uint8Array([5, 1, 0, ...DSTADDR, portRemote >> 8, portRemote & 0xff]);
@@ -754,10 +754,10 @@ async function socks5Connect(addressType, addressRemote, portRemote, log) {
 
 	res = (await reader.read()).value;
 	// Response format (Socks Server -> Worker):
-	//  +----+-----+-------+------+----------+----------+
-	// |VER | REP |  RSV  | ATYP | BND.ADDR | BND.PORT |
+	//	+----+-----+-------+------+----------+----------+
+	// |VER | REP |	RSV	| ATYP | BND.ADDR | BND.PORT |
 	// +----+-----+-------+------+----------+----------+
-	// | 1  |  1  | X'00' |  1   | Variable |    2     |
+	// | 1	|	1	| X'00' |	1	 | Variable |		2		 |
 	// +----+-----+-------+------+----------+----------+
 	if (res[1] === 0x00) {
 		log("socks connection opened");
@@ -843,13 +843,81 @@ function generateUUID() {
 }
 
 async function ADD(envadd) {
-	var addtext = envadd.replace(/[	 "'\r\n]+/g, ',').replace(/,+/g, ',');  // 将空格、双引号、单引号和换行符替换为逗号
+	var addtext = envadd.replace(/[	 |"'\r\n]+/g, ',').replace(/,+/g, ',');	// 将空格、双引号、单引号和换行符替换为逗号
 	//console.log(addtext);
 	if (addtext.charAt(0) == ',') addtext = addtext.slice(1);
 	if (addtext.charAt(addtext.length -1) == ',') addtext = addtext.slice(0, addtext.length - 1);
 	const add = addtext.split(',');
 	//console.log(add);
 	return add ;
+}
+
+let 神秘代码 = 'dmxlc3M=';
+function 分享URL(UUID, 域名地址) {
+	const 协议类型 = atob(神秘代码);
+	
+	const 别名 = 域名地址;
+	let 地址 = 域名地址;
+	let 端口 = 443;
+
+	const 用户ID = UUID;
+	const 加密方式 = 'none';
+	
+	const 传输层协议 = 'ws';
+	const 伪装域名 = 域名地址;
+	const 路径 = '/?ed=2560';
+	
+	let 传输层安全 = 'tls';
+	const SNI = 域名地址;
+	const 指纹 = 'randomized';
+
+	if (域名地址.includes('.workers.dev')){
+		地址 = 'www.wto.org';
+		端口 = 80 ;
+		传输层安全 = '';
+	}
+
+	return `${协议类型}://${用户ID}@${地址}:${端口}?encryption=${加密方式}&security=${传输层安全}&sni=${SNI}&fp=${指纹}&type=${传输层协议}&host=${伪装域名}&path=${encodeURIComponent(路径)}#${encodeURIComponent(别名)}`;
+}
+
+function clash配置(UUID, 域名地址) {
+	const 协议类型 = atob(神秘代码);
+	
+	const 别名 = 域名地址;
+	let 地址 = 域名地址;
+	let 端口 = 443;
+
+	const 用户ID = UUID;
+	//const 加密方式 = 'none';
+	
+	const 传输层协议 = 'ws';
+	const 伪装域名 = 域名地址;
+	const 路径 = '/?ed=2560';
+	
+	let 传输层安全 = true;
+	const SNI = 域名地址;
+	const 指纹 = 'randomized';
+
+	if (域名地址.includes('.workers.dev')){
+		地址 = 'www.wto.org';
+		端口 = 80 ;
+		传输层安全 = false;
+	}
+
+	return `- type: ${协议类型}
+	name: ${别名}
+	server: ${地址}
+	port: ${端口}
+	uuid: ${用户ID}
+	network: ${传输层协议}
+	tls: ${传输层安全}
+	udp: false
+	sni: ${SNI}
+	client-fingerprint: ${指纹}
+	ws-opts:
+	  path: "${路径}"
+	  headers:
+	  host: ${伪装域名}`;
 }
 
 /**
@@ -859,44 +927,27 @@ async function ADD(envadd) {
  * @param {string} userAgent
  * @returns {Promise<string>}
  */
-let vv = 'v';
-let ll = 'l';
-let ee = 'e';
-let ss = 's';
 async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
+	const v2ray = 分享URL(userID , hostName);
+	const clashmeta = clash配置(userID , hostName);
 	// 如果sub为空，则显示原始内容
 	if (!sub || sub === '') {
-		const cmliuMain = `${vv}${ll}${ee}${ss}${ss}://${userID}@${hostName}:443?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2F%3Fed%3D2560#${hostName}`;
-  
+		
 		return `
 	################################################################
 	v2ray
 	---------------------------------------------------------------
-	${cmliuMain}
+	${v2ray}
 	---------------------------------------------------------------
 	################################################################
 	clash-meta
 	---------------------------------------------------------------
-	- type: ${vv}${ll}${ee}${ss}${ss}
-	  name: ${hostName}
-	  server: ${hostName}
-	  port: 443
-	  uuid: ${userID}
-	  network: ws
-	  tls: true
-	  udp: false
-	  sni: ${hostName}
-	  client-fingerprint: chrome
-	  ws-opts:
-	    path: "/?ed=2560"
-	    headers:
-		  host: ${hostName}
+	${clashmeta}
 	---------------------------------------------------------------
 	################################################################
 	`;
 	} else if (sub && userAgent.includes('mozilla') && !userAgent.includes('linux x86')) {
-		const cmliuMain = `${vv}${ll}${ee}${ss}${ss}://${userID}@${hostName}:443?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2F%3Fed%3D2560#${hostName}`;
-	
+		
 		return `
 	################################################################
 	Subscribe / sub 订阅地址, 支持 Base64、clash-meta、sing-box 订阅格式, 您的订阅内容由 ${sub} 提供维护支持, 自动获取ProxyIP: ${RproxyIP}.
@@ -906,25 +957,12 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 	################################################################
 	v2ray
 	---------------------------------------------------------------
-	${cmliuMain}
+	${v2ray}
 	---------------------------------------------------------------
 	################################################################
 	clash-meta
 	---------------------------------------------------------------
-	- type: ${vv}${ll}${ee}${ss}${ss}
-	  name: ${hostName}
-	  server: ${hostName}
-	  port: 443
-	  uuid: ${userID}
-	  network: ws
-	  tls: true
-	  udp: false
-	  sni: ${hostName}
-	  client-fingerprint: chrome
-	  ws-opts:
-		path: "/?ed=2560"
-		headers:
-		  host: ${hostName}
+	${clashmeta}
 	---------------------------------------------------------------
 	################################################################
 	telegram 交流群 技术大佬~在线发牌!
