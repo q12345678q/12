@@ -899,7 +899,7 @@ function 配置信息(UUID, 域名地址) {
 	return [v2ray,clash];
 }
 
-let 订阅参数 = ['sub','base64','b64','clash','singbox','sb'];
+let subParams = ['sub','base64','b64','clash','singbox','sb'];
 
 /**
  * @param {string} userID
@@ -908,13 +908,13 @@ let 订阅参数 = ['sub','base64','b64','clash','singbox','sb'];
  * @param {string} UA
  * @returns {Promise<string>}
  */
-async function getVLESSConfig(userID, hostName, sub, UA, RproxyIP, 访问url) {
+async function getVLESSConfig(userID, hostName, sub, UA, RproxyIP, _url) {
 	const userAgent = UA.toLowerCase();
 	const Config = 配置信息(userID , hostName);
 	const v2ray = Config[0];
 	const clash = Config[1];
 	// 如果sub为空，则显示原始内容
-	if ((!sub || sub === '') && !订阅参数.some(路径参数 => 访问url.searchParams.has(路径参数))) {
+	if ((!sub || sub === '') && !subParams.some(_searchParams => _url.searchParams.has(_searchParams))) {
 		
 		return `
 	################################################################
@@ -929,7 +929,7 @@ async function getVLESSConfig(userID, hostName, sub, UA, RproxyIP, 访问url) {
 	---------------------------------------------------------------
 	################################################################
 	`;
-	} else if (sub && userAgent.includes('mozilla') && !订阅参数.some(路径参数 => 访问url.searchParams.has(路径参数))) {
+	} else if (sub && userAgent.includes('mozilla') && !subParams.some(_searchParams => _url.searchParams.has(_searchParams))) {
 		
 		return `
 	################################################################
@@ -986,9 +986,9 @@ async function getVLESSConfig(userID, hostName, sub, UA, RproxyIP, 访问url) {
 
 		let url = `https://${sub}/sub?host=${fakeHostName}&uuid=${fakeUserID}&edgetunnel=cmliu&proxyip=${RproxyIP}`;
 		let isBase64 = false;
-		if ((userAgent.includes('clash') && !userAgent.includes('nekobox')) || ( 访问url.searchParams.has('clash') && !userAgent.includes('subconverter'))) {
+		if ((userAgent.includes('clash') && !userAgent.includes('nekobox')) || ( _url.searchParams.has('clash') && !userAgent.includes('subconverter'))) {
 			url = `https://${subconverter}/sub?target=clash&url=${encodeURIComponent(url)}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
-		} else if (userAgent.includes('sing-box') || userAgent.includes('singbox') || ( (访问url.searchParams.has('singbox') || 访问url.searchParams.has('sb')) && !userAgent.includes('subconverter'))) {
+		} else if (userAgent.includes('sing-box') || userAgent.includes('singbox') || (( _url.searchParams.has('singbox') || _url.searchParams.has('sb')) && !userAgent.includes('subconverter'))) {
 			url = `https://${subconverter}/sub?target=singbox&url=${encodeURIComponent(url)}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
 		} else {
 			isBase64 = true;
