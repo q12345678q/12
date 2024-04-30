@@ -37,7 +37,8 @@ export default {
 	 */
 	async fetch(request, env, ctx) {
 		try {
-			const userAgent = request.headers.get('User-Agent').toLowerCase();
+			const UA = request.headers.get('User-Agent') || 'null';
+			const userAgent = UA.toLowerCase();
 			userID = (env.UUID || userID).toLowerCase();
 			proxyIP = env.PROXYIP || proxyIP;
 			const proxyIPs = await ADD(proxyIP);
@@ -69,7 +70,7 @@ export default {
 				case '/':
 					return new Response(JSON.stringify(request.cf, null, 4), { status: 200 });
 				case `/${userID}`: {
-					const vlessConfig = await getVLESSConfig(userID, request.headers.get('Host'), sub, userAgent, RproxyIP);
+					const vlessConfig = await getVLESSConfig(userID, request.headers.get('Host'), sub, UA, RproxyIP, url);
 					const now = Date.now();
 					const timestamp = Math.floor(now / 1000);
 					const expire = 4102329600;//2099-12-31
@@ -81,6 +82,8 @@ export default {
 							status: 200,
 							headers: {
 								"Content-Type": "text/plain;charset=utf-8",
+								"Profile-Update-Interval": "6",
+								"Subscription-Userinfo": `upload=${UD}; download=${UD}; total=${24 * 1099511627776}; expire=${expire}`,
 							}
 						});
 					} else {
@@ -880,76 +883,92 @@ function 配置信息(UUID, 域名地址) {
 
 	const v2ray = `${协议类型}://${用户ID}@${地址}:${端口}?encryption=${加密方式}&security=${传输层安全[0]}&sni=${SNI}&fp=${指纹}&type=${传输层协议}&host=${伪装域名}&path=${encodeURIComponent(路径)}#${encodeURIComponent(别名)}`;
 	const clash = `- type: ${协议类型}
-	name: ${别名}
-	server: ${地址}
-	port: ${端口}
-	uuid: ${用户ID}
-	network: ${传输层协议}
-	tls: ${传输层安全[1]}
-	udp: false
-	sni: ${SNI}
-	client-fingerprint: ${指纹}
-	ws-opts:
-	  path: "${路径}"
-	  headers:
-	  host: ${伪装域名}`;
+  name: ${别名}
+  server: ${地址}
+  port: ${端口}
+  uuid: ${用户ID}
+  network: ${传输层协议}
+  tls: ${传输层安全[1]}
+  udp: false
+  sni: ${SNI}
+  client-fingerprint: ${指纹}
+  ws-opts:
+    path: "${路径}"
+    headers:
+      host: ${伪装域名}`;
 	return [v2ray,clash];
 }
+
+let subParams = ['sub','base64','b64','clash','singbox','sb'];
 
 /**
  * @param {string} userID
  * @param {string | null} hostName
  * @param {string} sub
- * @param {string} userAgent
+ * @param {string} UA
  * @returns {Promise<string>}
  */
-async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
+async function getVLESSConfig(userID, hostName, sub, UA, RproxyIP, _url) {
+	const userAgent = UA.toLowerCase();
 	const Config = 配置信息(userID , hostName);
 	const v2ray = Config[0];
 	const clash = Config[1];
 	// 如果sub为空，则显示原始内容
-	if (!sub || sub === '') {
+	if ((!sub || sub === '') && !subParams.some(_searchParams => _url.searchParams.has(_searchParams))) {
 		
 		return `
-	################################################################
-	v2ray
-	---------------------------------------------------------------
-	${v2ray}
-	---------------------------------------------------------------
-	################################################################
-	clash-meta
-	---------------------------------------------------------------
-	${clash}
-	---------------------------------------------------------------
-	################################################################
-	`;
-	} else if (sub && userAgent.includes('mozilla') && !userAgent.includes('linux x86')) {
+################################################################
+v2ray
+---------------------------------------------------------------
+${v2ray}
+---------------------------------------------------------------
+################################################################
+clash-meta
+---------------------------------------------------------------
+${clash}
+---------------------------------------------------------------
+################################################################
+`;
+	} else if (sub && userAgent.includes('mozilla') && !subParams.some(_searchParams => _url.searchParams.has(_searchParams))) {
 		
 		return `
-	################################################################
-	Subscribe / sub 订阅地址, 支持 Base64、clash-meta、sing-box 订阅格式, 您的订阅内容由 ${sub} 提供维护支持, 自动获取ProxyIP: ${RproxyIP}.
-	---------------------------------------------------------------
-	https://${hostName}/${userID}
-	---------------------------------------------------------------
-	################################################################
-	v2ray
-	---------------------------------------------------------------
-	${v2ray}
-	---------------------------------------------------------------
-	################################################################
-	clash-meta
-	---------------------------------------------------------------
-	${clash}
-	---------------------------------------------------------------
-	################################################################
-	telegram 交流群 技术大佬~在线发牌!
-	https://t.me/CMLiussss
-	---------------------------------------------------------------
-	github 项目地址 Star!Star!Star!!!
-	https://github.com/cmliu/edgetunnel
-	---------------------------------------------------------------
-	################################################################
-	`;
+################################################################
+Subscribe / sub 订阅地址, 支持 Base64、clash-meta、sing-box 订阅格式, 您的订阅内容由 ${sub} 提供维护支持, 自动获取ProxyIP: ${RproxyIP}.
+---------------------------------------------------------------
+快速自适应订阅地址:
+https://${hostName}/${userID}
+
+Base64订阅地址:
+https://${hostName}/${userID}?sub
+https://${hostName}/${userID}?b64
+https://${hostName}/${userID}?base64
+
+clash订阅地址:
+https://${hostName}/${userID}?clash
+
+singbox订阅地址:
+https://${hostName}/${userID}?sb
+https://${hostName}/${userID}?singbox
+---------------------------------------------------------------
+################################################################
+v2ray
+---------------------------------------------------------------
+${v2ray}
+---------------------------------------------------------------
+################################################################
+clash-meta
+---------------------------------------------------------------
+${clash}
+---------------------------------------------------------------
+################################################################
+telegram 交流群 技术大佬~在线发牌!
+https://t.me/CMLiussss
+---------------------------------------------------------------
+github 项目地址 Star!Star!Star!!!
+https://github.com/cmliu/edgetunnel
+---------------------------------------------------------------
+################################################################
+`;
 	} else {
 		if (typeof fetch != 'function') {
 			return 'Error: fetch is not available in this environment.';
@@ -967,9 +986,9 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 
 		let url = `https://${sub}/sub?host=${fakeHostName}&uuid=${fakeUserID}&edgetunnel=cmliu&proxyip=${RproxyIP}`;
 		let isBase64 = false;
-		if (userAgent.includes('clash') && !userAgent.includes('nekobox')) {
+		if ((userAgent.includes('clash') && !userAgent.includes('nekobox')) || ( _url.searchParams.has('clash') && !userAgent.includes('subconverter'))) {
 			url = `https://${subconverter}/sub?target=clash&url=${encodeURIComponent(url)}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
-		} else if (userAgent.includes('sing-box') || userAgent.includes('singbox')) {
+		} else if (userAgent.includes('sing-box') || userAgent.includes('singbox') || (( _url.searchParams.has('singbox') || _url.searchParams.has('sb')) && !userAgent.includes('subconverter'))) {
 			url = `https://${subconverter}/sub?target=singbox&url=${encodeURIComponent(url)}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
 		} else {
 			isBase64 = true;
@@ -978,7 +997,7 @@ async function getVLESSConfig(userID, hostName, sub, userAgent, RproxyIP) {
 		try {
 			const response = await fetch(url ,{
 			headers: {
-				'User-Agent': 'CF-Workers-edgetunnel/cmliu'
+				'User-Agent': `${UA} CF-Workers-edgetunnel/cmliu`
 			}});
 			const content = await response.text();
 			return revertFakeInfo(content, userID, hostName, isBase64);
