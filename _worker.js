@@ -68,9 +68,13 @@ export default {
 				// const url = new URL(request.url);
 				switch (url.pathname.toLowerCase()) {
 				case '/':
-					if (env.URL302)return Response.redirect(env.URL302, 302);
-					else if (env.URL)return fetch(new Request(env.URL, request));
-					else return new Response(JSON.stringify(request.cf, null, 4), { status: 200 });
+					const envKey = env.URL302 ? 'URL302' : (env.URL ? 'URL' : null);
+					if (envKey) {
+						const URLs = await ADD(env[envKey]);
+						const URL = URLs[Math.floor(Math.random() * URLs.length)];
+						return envKey === 'URL302' ? Response.redirect(URL, 302) : fetch(new Request(URL, request));
+					}
+					return new Response(JSON.stringify(request.cf, null, 4), { status: 200 });
 				case `/${userID}`: {
 					const vlessConfig = await getVLESSConfig(userID, request.headers.get('Host'), sub, UA, RproxyIP, url);
 					const now = Date.now();
