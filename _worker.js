@@ -68,11 +68,9 @@ export default {
 				// const url = new URL(request.url);
 				switch (url.pathname.toLowerCase()) {
 				case '/':
-					if (env.URL){
-						return fetch(new Request(env.URL, request));
-					} else {
-						return new Response(JSON.stringify(request.cf, null, 4), { status: 200 });
-					}
+					if (env.URL302)return Response.redirect(env.URL302, 302);
+					else if (env.URL)return fetch(new Request(env.URL, request));
+					else return new Response(JSON.stringify(request.cf, null, 4), { status: 200 });
 				case `/${userID}`: {
 					const vlessConfig = await getVLESSConfig(userID, request.headers.get('Host'), sub, UA, RproxyIP, url);
 					const now = Date.now();
