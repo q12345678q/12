@@ -27,7 +27,7 @@ let enableSocks = false;
 // 虚假uuid和hostname，用于发送给配置生成服务
 let fakeUserID = generateUUID();
 let fakeHostName = generateRandomString();
-let tls = true;
+let noTLS = 'false'; 
 const expire = 4102329600;//2099-12-31
 let proxyIPs;
 let addresses = [];
@@ -85,7 +85,7 @@ export default {
 			ChatID = env.TGID || ChatID; 
 			const upgradeHeader = request.headers.get('Upgrade');
 			const url = new URL(request.url);
-			if (url.searchParams.has('notls')) tls = false;
+			if (url.searchParams.has('notls')) noTLS = 'true';
 			if (!upgradeHeader || upgradeHeader !== 'websocket') {
 				// const url = new URL(request.url);
 				switch (url.pathname.toLowerCase()) {
@@ -898,7 +898,7 @@ function generateUUID() {
 }
 
 async function ADD(envadd) {
-	var addtext = envadd.replace(/[	|"'\r\n]+/g, ',').replace(/,+/g, ',');  // 将空格、双引号、单引号和换行符替换为逗号
+	var addtext = envadd.replace(/[	 "'\r\n]+/g, ',').replace(/,+/g, ',');  // 将空格、双引号、单引号和换行符替换为逗号
 	//console.log(addtext);
 	if (addtext.charAt(0) == ',') addtext = addtext.slice(1);
 	if (addtext.charAt(addtext.length -1) == ',') addtext = addtext.slice(0, addtext.length - 1);
@@ -1031,7 +1031,7 @@ https://github.com/cmliu/edgetunnel
 			newAddressesnotlscsv = await getAddressescsv('FALSE');
 		} else if (hostName.includes(".pages.dev")){
 			fakeHostName = `${fakeHostName}.${generateRandomString()}${generateRandomNumber()}.pages.dev`;
-		} else if (hostName.includes("worker") || hostName.includes("notls") || tls == false){
+		} else if (hostName.includes("worker") || hostName.includes("notls") || noTLS == 'true'){
 			fakeHostName = `notls.${fakeHostName}${generateRandomNumber()}.net`;
 			newAddressesnotlsapi = await getAddressesapi(addressesnotlsapi);
 			newAddressesnotlscsv = await getAddressescsv('FALSE');
@@ -1067,7 +1067,7 @@ https://github.com/cmliu/edgetunnel
 		let isBase64 = true;
 		
 		if (!sub || sub == ""){
-			const 生成本地节点 = await subAddresses(fakeHostName,fakeUserID,tls,newAddressesapi,newAddressescsv,newAddressesnotlsapi,newAddressesnotlscsv);
+			const 生成本地节点 = await subAddresses(fakeHostName,fakeUserID,noTLS,newAddressesapi,newAddressescsv,newAddressesnotlsapi,newAddressesnotlscsv);
 			const 解码本地节点 = atob(生成本地节点)
 			const 本地节点数组 = 解码本地节点.split('\n');
 			url = 本地节点数组.join('|');
@@ -1087,7 +1087,7 @@ https://github.com/cmliu/edgetunnel
 		try {
 			let content;
 			if ((!sub || sub == "") && isBase64 == true) {
-				content = await subAddresses(fakeHostName,fakeUserID,tls,newAddressesapi,newAddressescsv,newAddressesnotlsapi,newAddressesnotlscsv);
+				content = await subAddresses(fakeHostName,fakeUserID,noTLS,newAddressesapi,newAddressescsv,newAddressesnotlsapi,newAddressesnotlscsv);
 			} else {
 				const response = await fetch(url ,{
 					headers: {
@@ -1294,12 +1294,12 @@ async function getAddressescsv(tls) {
 	return newAddressescsv;
 }
 
-function subAddresses(host,UUID,tls,newAddressesapi,newAddressescsv,newAddressesnotlsapi,newAddressesnotlscsv) {
+function subAddresses(host,UUID,noTLS,newAddressesapi,newAddressescsv,newAddressesnotlsapi,newAddressesnotlscsv) {
 	const regex = /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|\[.*\]):?(\d+)?#?(.*)?$/;
 	addresses = addresses.concat(newAddressesapi);
 	addresses = addresses.concat(newAddressescsv);
 	let notlsresponseBody ;
-	if (tls == false){
+	if (noTLS == 'true'){
 		addressesnotls = addressesnotls.concat(newAddressesnotlsapi);
 		addressesnotls = addressesnotls.concat(newAddressesnotlscsv);
 		const uniqueAddressesnotls = [...new Set(addressesnotls)];
@@ -1404,7 +1404,7 @@ function subAddresses(host,UUID,tls,newAddressesapi,newAddressescsv,newAddresses
 	}).join('\n');
 
 	let base64Response = responseBody; // 重新进行 Base64 编码
-	if(tls == false) base64Response += `\nnotlsresponseBody`
+	if(noTLS == 'true') base64Response += `\nnotlsresponseBody`
 	return btoa(base64Response);
 }
 
