@@ -1107,80 +1107,80 @@ https://github.com/cmliu/edgetunnel
 }
 
 async function getAccountId(email, key) {
-    try {
-        const url = 'https://api.cloudflare.com/client/v4/accounts';
-        const headers = new Headers({
-            'X-AUTH-EMAIL': email,
-            'X-AUTH-KEY': key
-        });
-        const response = await fetch(url, { headers });
-        const data = await response.json();
-        return data.result[0].id; // 假设我们需要第一个账号ID
-    } catch (error) {
+	try {
+		const url = 'https://api.cloudflare.com/client/v4/accounts';
+		const headers = new Headers({
+			'X-AUTH-EMAIL': email,
+			'X-AUTH-KEY': key
+		});
+		const response = await fetch(url, { headers });
+		const data = await response.json();
+		return data.result[0].id; // 假设我们需要第一个账号ID
+	} catch (error) {
 		return false ;
 	}
 }
 
 async function getSum(accountId, accountIndex, email, key, startDate, endDate) {
-    try {
-        const startDateISO = new Date(startDate).toISOString();
-        const endDateISO = new Date(endDate).toISOString();
-    
-        const query = JSON.stringify({
-            query: `query getBillingMetrics($accountId: String!, $filter: AccountWorkersInvocationsAdaptiveFilter_InputObject) {
-                viewer {
-                    accounts(filter: {accountTag: $accountId}) {
-                        pagesFunctionsInvocationsAdaptiveGroups(limit: 1000, filter: $filter) {
-                            sum {
-                                requests
-                            }
-                        }
-                        workersInvocationsAdaptive(limit: 10000, filter: $filter) {
-                            sum {
-                                requests
-                            }
-                        }
-                    }
-                }
-            }`,
-            variables: {
-                accountId,
-                filter: { datetime_geq: startDateISO, datetime_leq: endDateISO }
-            },
-        });
-    
-        const headers = new Headers({
-            'Content-Type': 'application/json',
-            'X-AUTH-EMAIL': email,
-            'X-AUTH-KEY': key,
-        });
-    
-        const response = await fetch(`https://api.cloudflare.com/client/v4/graphql`, {
-            method: 'POST',
-            headers: headers,
-            body: query
-        });
-    
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-    
-        const res = await response.json();
-    
-        const pagesFunctionsInvocationsAdaptiveGroups = res?.data?.viewer?.accounts?.[accountIndex]?.pagesFunctionsInvocationsAdaptiveGroups;
-        const workersInvocationsAdaptive = res?.data?.viewer?.accounts?.[accountIndex]?.workersInvocationsAdaptive;
-    
-        if (!pagesFunctionsInvocationsAdaptiveGroups && !workersInvocationsAdaptive) {
-            throw new Error('找不到数据');
-        }
-    
-        const pagesSum = pagesFunctionsInvocationsAdaptiveGroups.reduce((a, b) => a + b?.sum.requests, 0);
-        const workersSum = workersInvocationsAdaptive.reduce((a, b) => a + b?.sum.requests, 0);
-    
-        //console.log(`范围: ${startDateISO} ~ ${endDateISO}\n默认取第 ${accountIndex} 项`);
-    
-        return [pagesSum, workersSum ];
-    } catch (error) {
+	try {
+		const startDateISO = new Date(startDate).toISOString();
+		const endDateISO = new Date(endDate).toISOString();
+	
+		const query = JSON.stringify({
+			query: `query getBillingMetrics($accountId: String!, $filter: AccountWorkersInvocationsAdaptiveFilter_InputObject) {
+				viewer {
+					accounts(filter: {accountTag: $accountId}) {
+						pagesFunctionsInvocationsAdaptiveGroups(limit: 1000, filter: $filter) {
+							sum {
+								requests
+							}
+						}
+						workersInvocationsAdaptive(limit: 10000, filter: $filter) {
+							sum {
+								requests
+							}
+						}
+					}
+				}
+			}`,
+			variables: {
+				accountId,
+				filter: { datetime_geq: startDateISO, datetime_leq: endDateISO }
+			},
+		});
+	
+		const headers = new Headers({
+			'Content-Type': 'application/json',
+			'X-AUTH-EMAIL': email,
+			'X-AUTH-KEY': key,
+		});
+	
+		const response = await fetch(`https://api.cloudflare.com/client/v4/graphql`, {
+			method: 'POST',
+			headers: headers,
+			body: query
+		});
+	
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+	
+		const res = await response.json();
+	
+		const pagesFunctionsInvocationsAdaptiveGroups = res?.data?.viewer?.accounts?.[accountIndex]?.pagesFunctionsInvocationsAdaptiveGroups;
+		const workersInvocationsAdaptive = res?.data?.viewer?.accounts?.[accountIndex]?.workersInvocationsAdaptive;
+	
+		if (!pagesFunctionsInvocationsAdaptiveGroups && !workersInvocationsAdaptive) {
+			throw new Error('找不到数据');
+		}
+	
+		const pagesSum = pagesFunctionsInvocationsAdaptiveGroups.reduce((a, b) => a + b?.sum.requests, 0);
+		const workersSum = workersInvocationsAdaptive.reduce((a, b) => a + b?.sum.requests, 0);
+	
+		//console.log(`范围: ${startDateISO} ~ ${endDateISO}\n默认取第 ${accountIndex} 项`);
+	
+		return [pagesSum, workersSum ];
+	} catch (error) {
 		return [ 0,0 ];
 	}
 }
