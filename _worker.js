@@ -1198,7 +1198,7 @@ async function getAddressesapi(api) {
 			method: 'get', 
 			headers: {
 				'Accept': 'text/html,application/xhtml+xml,application/xml;',
-				'User-Agent': 'CF-Workers-epeius/cmliu'
+				'User-Agent': 'CF-Workers-edgetunnel/cmliu'
 			},
 			signal: controller.signal // 将AbortController的信号量添加到fetch请求中，以便于需要时可以取消请求
 		}).then(response => response.ok ? response.text() : Promise.reject())));
