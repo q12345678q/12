@@ -99,9 +99,7 @@ export default {
 					return new Response(JSON.stringify(request.cf, null, 4), { status: 200 });
 				case `/${userID}`: {
 					await sendMessage(`#获取订阅 ${FileName}`, request.headers.get('CF-Connecting-IP'), `UA: ${UA}</tg-spoiler>\n域名: ${url.hostname}\n<tg-spoiler>入口: ${url.pathname + url.search}</tg-spoiler>`);
-					if ((!sub || sub == '') && (addresses.length + addressesapi.length + addressesnotls.length + addressesnotlsapi.length + addressescsv.length) == 0){
-						sub = 'vless-4ca.pages.dev'
-					}
+					if ((!sub || sub == '') && (addresses.length + addressesapi.length + addressesnotls.length + addressesnotlsapi.length + addressescsv.length) == 0) sub = 'vless-4ca.pages.dev';
 					const vlessConfig = await getVLESSConfig(userID, request.headers.get('Host'), sub, UA, RproxyIP, url);
 					const now = Date.now();
 					//const timestamp = Math.floor(now / 1000);
@@ -127,7 +125,7 @@ export default {
 							total = 102400 ;
 						}
 					}
-					console.log(`pagesSum: ${pagesSum}\nworkersSum: ${workersSum}\ntotal: ${total}`);
+					//console.log(`pagesSum: ${pagesSum}\nworkersSum: ${workersSum}\ntotal: ${total}`);
 					if (userAgent && userAgent.includes('mozilla')){
 						return new Response(`${vlessConfig}`, {
 							status: 200,
@@ -141,7 +139,7 @@ export default {
 						return new Response(`${vlessConfig}`, {
 							status: 200,
 							headers: {
-								"Content-Disposition": `attachment; filename=${FileName}; filename*=utf-8''${FileName}`,
+								"Content-Disposition": `attachment; filename=${FileName}; filename*=utf-8''${encodeURIComponent(FileName)}`,
 								"Content-Type": "text/plain;charset=utf-8",
 								"Profile-Update-Interval": "6",
 								"Subscription-Userinfo": `upload=${pagesSum}; download=${workersSum}; total=${total}; expire=${expire}`,
