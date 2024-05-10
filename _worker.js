@@ -60,8 +60,8 @@ export default {
 			const timestamp = Math.ceil(currentDate.getTime() / 1000);
 			const fakeUserIDMD5 = await MD5MD5(`${userID}${timestamp}`);
 			fakeUserID = fakeUserIDMD5.slice(0, 8) + "-" + fakeUserIDMD5.slice(8, 12) + "-" + fakeUserIDMD5.slice(12, 16) + "-" + fakeUserIDMD5.slice(16, 20) + "-" + fakeUserIDMD5.slice(20);
-			//console.log(fakeUserID); // 打印fakeID
-			fakeHostName = await MD5MD5(`${fakeUserID}${userID}`);
+			fakeHostName = `${fakeUserIDMD5.slice(6, 9)}.${fakeUserIDMD5.slice(13, 19)}`;
+			//console.log(`${fakeUserID}\n${fakeHostName}`); // 打印fakeID
 
 			proxyIP = env.PROXYIP || proxyIP;
 			proxyIPs = await ADD(proxyIP);
@@ -1006,8 +1006,6 @@ https://github.com/cmliu/edgetunnel
 			return 'Error: fetch is not available in this environment.';
 		}
 
-		let url = `https://${sub}/sub?host=${fakeHostName}&uuid=${fakeUserID}&edgetunnel=cmliu&proxyip=${RproxyIP}`;
-		let isBase64 = true;
 		let newAddressesapi ;
 		let newAddressescsv ;
 		let newAddressesnotlsapi;
@@ -1015,18 +1013,21 @@ https://github.com/cmliu/edgetunnel
 
 		// 如果是使用默认域名，则改成一个workers的域名，订阅器会加上代理
 		if (hostName.includes(".workers.dev")){
-			fakeHostName = `${fakeHostName}.${await MD5MD5(fakeHostName)}.workers.dev`;
+			fakeHostName = `${fakeHostName}.workers.dev`;
 			newAddressesnotlsapi = await getAddressesapi(addressesnotlsapi);
 			newAddressesnotlscsv = await getAddressescsv('FALSE');
 		} else if (hostName.includes(".pages.dev")){
-			fakeHostName = `${fakeHostName}.${await MD5MD5(fakeHostName)}.pages.dev`;
+			fakeHostName = `${fakeHostName}.pages.dev`;
 		} else if (hostName.includes("worker") || hostName.includes("notls") || noTLS == 'true'){
-			fakeHostName = `notls.${fakeHostName}${await MD5MD5(fakeHostName)}.net`;
+			fakeHostName = `notls.${fakeHostName.split('.')[1]}${fakeHostName.split('.')[0]}.net`;
 			newAddressesnotlsapi = await getAddressesapi(addressesnotlsapi);
 			newAddressesnotlscsv = await getAddressescsv('FALSE');
 		} else {
-			fakeHostName = `${fakeHostName}.${await MD5MD5(fakeHostName)}.xyz`
+			fakeHostName = `${fakeHostName}.xyz`
 		}
+
+		let url = `https://${sub}/sub?host=${fakeHostName}&uuid=${fakeUserID}&edgetunnel=cmliu&proxyip=${RproxyIP}`;
+		let isBase64 = true;
 
 		if (!sub || sub == ""){
 			if(hostName.includes('workers.dev') || hostName.includes('pages.dev')) {
@@ -1387,7 +1388,7 @@ function subAddresses(host,UUID,noTLS,newAddressesapi,newAddressescsv,newAddress
 	}).join('\n');
 
 	let base64Response = responseBody; // 重新进行 Base64 编码
-	if(noTLS == 'true') base64Response += `\nnotlsresponseBody`
+	if(noTLS == 'true') base64Response += `\nnotlsresponseBody`;
 	return btoa(base64Response);
 }
 
