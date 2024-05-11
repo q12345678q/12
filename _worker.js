@@ -60,7 +60,7 @@ export default {
 			const timestamp = Math.ceil(currentDate.getTime() / 1000);
 			const fakeUserIDMD5 = await MD5MD5(`${userID}${timestamp}`);
 			fakeUserID = fakeUserIDMD5.slice(0, 8) + "-" + fakeUserIDMD5.slice(8, 12) + "-" + fakeUserIDMD5.slice(12, 16) + "-" + fakeUserIDMD5.slice(16, 20) + "-" + fakeUserIDMD5.slice(20);
-			fakeHostName = `${fakeUserIDMD5.slice(6, 9)}.${fakeUserIDMD5.slice(13, 19)}`;
+			fakeHostName = fakeUserIDMD5.slice(6, 9) + "." + fakeUserIDMD5.slice(13, 19);
 			//console.log(`${fakeUserID}\n${fakeHostName}`); // 打印fakeID
 
 			proxyIP = env.PROXYIP || proxyIP;
@@ -876,8 +876,8 @@ async function MD5MD5(text) {
 	const firstPass = await crypto.subtle.digest('MD5', encoder.encode(text));
 	const firstPassArray = Array.from(new Uint8Array(firstPass));
 	const firstHex = firstPassArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  
-	const secondPass = await crypto.subtle.digest('MD5', encoder.encode(firstHex));
+
+	const secondPass = await crypto.subtle.digest('MD5', encoder.encode(firstHex.slice(7, 27)));
 	const secondPassArray = Array.from(new Uint8Array(secondPass));
 	const secondHex = secondPassArray.map(b => b.toString(16).padStart(2, '0')).join('');
   
@@ -1019,7 +1019,7 @@ https://github.com/cmliu/edgetunnel
 		} else if (hostName.includes(".pages.dev")){
 			fakeHostName = `${fakeHostName}.pages.dev`;
 		} else if (hostName.includes("worker") || hostName.includes("notls") || noTLS == 'true'){
-			fakeHostName = `notls.${fakeHostName.split('.')[1]}${fakeHostName.split('.')[0]}.net`;
+			fakeHostName = `notls.${fakeHostName}.net`;
 			newAddressesnotlsapi = await getAddressesapi(addressesnotlsapi);
 			newAddressesnotlscsv = await getAddressescsv('FALSE');
 		} else {
