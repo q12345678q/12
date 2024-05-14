@@ -72,13 +72,15 @@ export default {
 			subconverter = env.SUBAPI || subconverter;
 			subconfig = env.SUBCONFIG || subconfig;
 			if (socks5Address) {
-				RproxyIP = env.RPROXYIP || 'false';
 				try {
 					parsedSocks5Address = socks5AddressParser(socks5Address);
+					RproxyIP = env.RPROXYIP || 'false';
 					enableSocks = true;
 				} catch (err) {
-  			/** @type {Error} */ let e = err;
+  					/** @type {Error} */ 
+					let e = err;
 					console.log(e.toString());
+					RproxyIP = env.RPROXYIP || !proxyIP ? 'true' : 'false';
 					enableSocks = false;
 				}
 			} else {
@@ -167,6 +169,31 @@ export default {
 				if (new RegExp('/proxyip=', 'i').test(url.pathname)) proxyIP = url.pathname.toLowerCase().split('/proxyip=')[1];
 				else if (new RegExp('/proxyip.', 'i').test(url.pathname)) proxyIP = `proxyip.${url.pathname.toLowerCase().split("/proxyip.")[1]}`;
 				else if (!proxyIP || proxyIP == '') proxyIP = 'proxyip.fxxk.dedyn.io';
+				
+				socks5Address = url.searchParams.get('socks5') || socks5Address;
+				if (new RegExp('/socks5=', 'i').test(url.pathname)) socks5Address = url.pathname.split('5=')[1];
+				else if (new RegExp('/socks://', 'i').test(url.pathname)) {
+					socks5Address = url.pathname.split('://')[1].split('#')[0];
+					if (socks5Address.includes('@')){
+						let userPassword = socks5Address.split('@')[0];
+						const base64Regex = /^(?:[A-Z0-9+/]{4})*(?:[A-Z0-9+/]{2}==|[A-Z0-9+/]{3}=)?$/i;
+						if (base64Regex.test(userPassword) && !userPassword.includes(':')) userPassword = atob(userPassword);
+						socks5Address = `${userPassword}@${socks5Address.split('@')[1]}`;
+					}
+				}
+				if (socks5Address) {
+					try {
+						parsedSocks5Address = socks5AddressParser(socks5Address);
+						enableSocks = true;
+					} catch (err) {
+						/** @type {Error} */ 
+						let e = err;
+						console.log(e.toString());
+						enableSocks = false;
+					}
+				} else {
+					enableSocks = false;
+				}
 				return await vlessOverWSHandler(request);
 			}
 		} catch (err) {
