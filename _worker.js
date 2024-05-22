@@ -37,6 +37,7 @@ let addressesnotlsapi = [];
 let addressescsv = [];
 let DLS = 8;
 let FileName = 'edgetunnel';
+let FileName = 'TG@jiedian1111111';
 let BotToken ='';
 let ChatID =''; 
 let proxyhosts = [];//本地代理域名池
