@@ -36,7 +36,6 @@ let addressesnotls = [];
 let addressesnotlsapi = [];
 let addressescsv = [];
 let DLS = 8;
-// let FileName = 'edgetunnel';
 let FileName = 'TG@jiedian1111111';
 let BotToken ='';
 let ChatID =''; 
