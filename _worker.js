@@ -1238,7 +1238,7 @@ async function getVLESSConfig(userID, hostName, sub, UA, RproxyIP, _url) {
 			}
 		} else if (RproxyIP != 'true'){
 			if (enableSocks) 订阅器 += `, 当前使用的Socks5： ${parsedSocks5Address.hostname}:${String(parsedSocks5Address.port)}`;
-			else 订阅器 += `, 当前使用的ProxyIP： ${proxyIPs.join(',')}`;
+			else 订阅器 += `, 当前使用的ProxyIP： ${proxyIPs.join(', ')}`;
 		}
 		return `
 ################################################################
