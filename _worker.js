@@ -1237,10 +1237,8 @@ async function getVLESSConfig(userID, hostName, sub, UA, RproxyIP, _url) {
 				订阅器 = `您的订阅内容由 内置 addresses/ADD 参数提供, 当前使用的ProxyIP： ${proxyIPs.join(',')}`;
 			}
 		} else if (RproxyIP != 'true'){
-			if (enableSocks){
-				const parsedSocks5Address = socks5AddressParser(socks5Address);
-				订阅器 += `, 当前使用的Socks5： ${parsedSocks5Address.hostname}:${String(parsedSocks5Address.port)}`;
-			} else 订阅器 += `, 当前使用的ProxyIP： ${proxyIPs.join(', ')}`;
+			if (enableSocks) 订阅器 += `, 当前使用的Socks5： ${parsedSocks5Address.hostname}:${String(parsedSocks5Address.port)}`;
+			else 订阅器 += `, 当前使用的ProxyIP： ${proxyIPs.join(',')}`;
 		}
 		return `
 ################################################################
