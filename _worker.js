@@ -96,6 +96,7 @@ export default {
 			ChatID = env.TGID || ChatID; 
 			const upgradeHeader = request.headers.get('Upgrade');
 			const url = new URL(request.url);
+			if (url.searchParams.has('sub') && url.searchParams.get('sub') !== '') sub = url.searchParams.get('sub');
 			if (url.searchParams.has('notls')) noTLS = 'true';
 			if (!upgradeHeader || upgradeHeader !== 'websocket') {
 				// const url = new URL(request.url);
