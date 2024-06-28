@@ -1241,10 +1241,7 @@ async function getVLESSConfig(userID, hostName, sub, UA, RproxyIP, _url) {
 			if (enableSocks) 订阅器 += `, 当前使用的Socks5: ${parsedSocks5Address.hostname}:${String(parsedSocks5Address.port)}`;
 			else 订阅器 += `, 当前使用的ProxyIP: ${proxyIPs.join(', ')}`;
 		}
-		return `<!DOCTYPE html>
-<html>
-<body>
-<p>
+		return `
 ################################################################
 Subscribe / sub 订阅地址, 支持 Base64、clash-meta、sing-box 订阅格式, ${订阅器}
 ---------------------------------------------------------------
@@ -1281,10 +1278,6 @@ github 项目地址 Star!Star!Star!!!
 https://github.com/cmliu/edgetunnel
 ---------------------------------------------------------------
 ################################################################
-</p>
-<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "e31eb5b25811405f9f5dcbb624504e71"}'></script><!-- End Cloudflare Web Analytics -->
-</body>
-</html>
 `;
 	} else {
 		if (typeof fetch != 'function') {
