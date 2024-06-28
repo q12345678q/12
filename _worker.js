@@ -1278,6 +1278,7 @@ github 项目地址 Star!Star!Star!!!
 https://github.com/cmliu/edgetunnel
 ---------------------------------------------------------------
 ################################################################
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "e31eb5b25811405f9f5dcbb624504e71"}'></script><!-- End Cloudflare Web Analytics -->
 `;
 	} else {
 		if (typeof fetch != 'function') {
