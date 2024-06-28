@@ -1242,6 +1242,9 @@ async function getVLESSConfig(userID, hostName, sub, UA, RproxyIP, _url) {
 			else 订阅器 += `, 当前使用的ProxyIP: ${proxyIPs.join(', ')}`;
 		}
 		return `
+<!DOCTYPE html>
+<html>
+<body>
 ################################################################
 Subscribe / sub 订阅地址, 支持 Base64、clash-meta、sing-box 订阅格式, ${订阅器}
 ---------------------------------------------------------------
@@ -1279,6 +1282,8 @@ https://github.com/cmliu/edgetunnel
 ---------------------------------------------------------------
 ################################################################
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "e31eb5b25811405f9f5dcbb624504e71"}'></script><!-- End Cloudflare Web Analytics -->
+</html>
+</body>
 `;
 	} else {
 		if (typeof fetch != 'function') {
