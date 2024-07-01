@@ -1358,8 +1358,10 @@ https://github.com/cmliu/edgetunnel
 					}});
 				content = await response.text();
 			}
-			if (!_url.pathname.includes(`/${fakeUserID}`)) content = revertFakeInfo(content, userID, hostName, isBase64);
-			return content;
+
+			if (_url.pathname == `/${fakeUserID}`) return content;
+			else return revertFakeInfo(content, userID, hostName, isBase64);
+
 		} catch (error) {
 			console.error('Error fetching content:', error);
 			return `Error fetching content: ${error.message}`;
