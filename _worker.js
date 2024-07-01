@@ -1360,7 +1360,8 @@ https://github.com/cmliu/edgetunnel
 			}
 
 			if (_url.pathname == `/${fakeUserID}`) return content;
-			else return revertFakeInfo(content, userID, hostName, isBase64);
+
+			return revertFakeInfo(content, userID, hostName, isBase64);
 
 		} catch (error) {
 			console.error('Error fetching content:', error);
