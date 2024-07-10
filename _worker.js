@@ -1304,7 +1304,7 @@ https://github.com/cmliu/edgetunnel
 		if (hostName.includes(".pages.dev")){
 			fakeHostName = `${fakeHostName}.pages.dev`;
 		} else if (hostName.includes("worker") || hostName.includes("notls") || noTLS == 'true'){
-			noTLS = 'true'
+			noTLS = 'true';
 			fakeHostName = `${fakeHostName}.workers.dev`;
 			newAddressesnotlsapi = await getAddressesapi(addressesnotlsapi);
 			newAddressesnotlscsv = await getAddressescsv('FALSE');
