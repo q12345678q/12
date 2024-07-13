@@ -9,9 +9,9 @@ let userID = '90cd4a77-141a-43c9-991b-08263cfe9c10';
 let proxyIP = '';// 小白勿动，该地址并不影响你的网速，这是给CF代理使用的。'cdn.xn--b6gac.eu.org, cdn-all.xn--b6gac.eu.org, workers.cloudflare.cyou'
 
 let sub = '';// 留空则使用内置订阅
-let subconverter = 'url.v1.mk';// clash订阅转换后端，目前使用肥羊的订阅转换功能。自带虚假uuid和host订阅。
+let subconverter = 'subapi-loadbalancing.pages.dev';// clash订阅转换后端，目前使用CM的订阅转换功能。自带虚假uuid和host订阅。
 let subconfig = "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online.ini"; //订阅配置文件
-
+let subProtocol = 'https';
 // The user name and password do not contain special characters
 // Setting the address will ignore proxyIP
 // Example:  user:pass@host:port  or  host:port
@@ -61,7 +61,7 @@ export default {
 			const fakeUserIDMD5 = await MD5MD5(`${userID}${timestamp}`);
 			fakeUserID = fakeUserIDMD5.slice(0, 8) + "-" + fakeUserIDMD5.slice(8, 12) + "-" + fakeUserIDMD5.slice(12, 16) + "-" + fakeUserIDMD5.slice(16, 20) + "-" + fakeUserIDMD5.slice(20);
 			fakeHostName = fakeUserIDMD5.slice(6, 9) + "." + fakeUserIDMD5.slice(13, 19);
-			//console.log(`${fakeUserID}\n${fakeHostName}`); // 打印fakeID
+			console.log(`虚假UUID: ${fakeUserID}`); // 打印fakeID
 
 			proxyIP = env.PROXYIP || proxyIP;
 			proxyIPs = await ADD(proxyIP);
@@ -70,6 +70,12 @@ export default {
 			socks5Address = env.SOCKS5 || socks5Address;
 			sub = env.SUB || sub;
 			subconverter = env.SUBAPI || subconverter;
+			if( subconverter.includes("http://") ){
+				subconverter = subconverter.split("//")[1];
+				subProtocol = 'http';
+			} else {
+				subconverter = subconverter.split("//")[1] || subconverter;
+			}
 			subconfig = env.SUBCONFIG || subconfig;
 			if (socks5Address) {
 				try {
@@ -110,19 +116,24 @@ export default {
 					}
 					return new Response(JSON.stringify(request.cf, null, 4), { status: 200 });
 				case `/${fakeUserID}`:
+					noTLS = 'true'; 
 					const fakeConfig = await getVLESSConfig(userID, request.headers.get('Host'), sub, 'CF-Workers-SUB', RproxyIP, url);
 					return new Response(`${fakeConfig}`, { status: 200 });
 				case `/${userID}`: {
 					await sendMessage(`#获取订阅 ${FileName}`, request.headers.get('CF-Connecting-IP'), `UA: ${UA}</tg-spoiler>\n域名: ${url.hostname}\n<tg-spoiler>入口: ${url.pathname + url.search}</tg-spoiler>`);
-					if ((!sub || sub == '') && (addresses.length + addressesapi.length + addressesnotls.length + addressesnotlsapi.length + addressescsv.length) == 0){
-						if (request.headers.get('Host').includes(".workers.dev")) {
-							sub = 'workervless2sub-f1q.pages.dev'; 
-							subconfig = 'https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/config/ACL4SSR_Online.ini';
+					if (!sub || sub == ''){
+						if((addresses.length + addressesapi.length + addressesnotls.length + addressesnotlsapi.length + addressescsv.length) == 0){
+							if (request.headers.get('Host').includes(".workers.dev")) {
+								sub = 'workervless2sub-f1q.pages.dev'; 
+								subconfig = env.SUBCONFIG || 'https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/config/ACL4SSR_Online.ini';
+							} else {
+								sub = 'vless-4ca.pages.dev';
+								subconfig = env.SUBCONFIG || "https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/config/ACL4SSR_Online_Full_MultiMode.ini";
+							}
 						} else {
-							sub = 'vless-4ca.pages.dev';
-							subconfig = "https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/config/ACL4SSR_Online_Full_MultiMode.ini";
+							noTLS = 'true'; 
 						}
-					} 
+					}
 					const vlessConfig = await getVLESSConfig(userID, request.headers.get('Host'), sub, UA, RproxyIP, url);
 					const now = Date.now();
 					//const timestamp = Math.floor(now / 1000);
@@ -1235,11 +1246,11 @@ async function getVLESSConfig(userID, hostName, sub, UA, RproxyIP, _url) {
 			if (!proxyIP || proxyIP =='') {
 				订阅器 = '您的订阅内容由 内置 addresses/ADD 参数提供, 当前使用的ProxyIP为空, 推荐您设置 proxyIP/PROXYIP ！！！';
 			} else {
-				订阅器 = `您的订阅内容由 内置 addresses/ADD 参数提供, 当前使用的ProxyIP： ${proxyIPs.join(',')}`;
+				订阅器 = `您的订阅内容由 内置 addresses/ADD 参数提供, 当前使用的ProxyIP: ${proxyIPs.join(', ')}`;
 			}
 		} else if (RproxyIP != 'true'){
-			if (enableSocks) 订阅器 += `, 当前使用的Socks5： ${parsedSocks5Address.hostname}:${String(parsedSocks5Address.port)}`;
-			else 订阅器 += `, 当前使用的ProxyIP： ${proxyIPs.join(', ')}`;
+			if (enableSocks) 订阅器 += `, 当前使用的Socks5: ${parsedSocks5Address.hostname}:${String(parsedSocks5Address.port)}`;
+			else 订阅器 += `, 当前使用的ProxyIP: ${proxyIPs.join(', ')}`;
 		}
 		return `
 ################################################################
@@ -1290,21 +1301,18 @@ https://github.com/cmliu/edgetunnel
 		let newAddressesnotlscsv;
 
 		// 如果是使用默认域名，则改成一个workers的域名，订阅器会加上代理
-		if (hostName.includes(".workers.dev")){
-			fakeHostName = `${fakeHostName}.workers.dev`;
-			newAddressesnotlsapi = await getAddressesapi(addressesnotlsapi);
-			newAddressesnotlscsv = await getAddressescsv('FALSE');
-		} else if (hostName.includes(".pages.dev")){
+		if (hostName.includes(".pages.dev")){
 			fakeHostName = `${fakeHostName}.pages.dev`;
 		} else if (hostName.includes("worker") || hostName.includes("notls") || noTLS == 'true'){
-			fakeHostName = `notls.${fakeHostName}.net`;
+			noTLS = 'true';
+			fakeHostName = `${fakeHostName}.workers.dev`;
 			newAddressesnotlsapi = await getAddressesapi(addressesnotlsapi);
 			newAddressesnotlscsv = await getAddressescsv('FALSE');
 		} else {
 			fakeHostName = `${fakeHostName}.xyz`
 		}
-
-		let url = `https://${sub}/sub?host=${fakeHostName}&uuid=${fakeUserID}&edgetunnel=cmliu&proxyip=${RproxyIP}`;
+		console.log(`虚假HOST: ${fakeHostName}`);
+		let url = `${subProtocol}://${sub}/sub?host=${fakeHostName}&uuid=${fakeUserID}&edgetunnel=cmliu&proxyip=${RproxyIP}`;
 		let isBase64 = true;
 
 		if (!sub || sub == ""){
@@ -1335,14 +1343,15 @@ https://github.com/cmliu/edgetunnel
 			newAddressesapi = await getAddressesapi(addressesapi);
 			newAddressescsv = await getAddressescsv('TRUE');
 			url = `https://${hostName}/${fakeUserID}`;
+			console.log(`虚假订阅: ${url}`);
 		} 
 
 		if (!userAgent.includes(('CF-Workers-SUB').toLowerCase())){
 			if ((userAgent.includes('clash') && !userAgent.includes('nekobox')) || ( _url.searchParams.has('clash') && !userAgent.includes('subconverter'))) {
-				url = `https://${subconverter}/sub?target=clash&url=${encodeURIComponent(url)}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
+				url = `${subProtocol}://${subconverter}/sub?target=clash&url=${encodeURIComponent(url)}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
 				isBase64 = false;
 			} else if (userAgent.includes('sing-box') || userAgent.includes('singbox') || (( _url.searchParams.has('singbox') || _url.searchParams.has('sb')) && !userAgent.includes('subconverter'))) {
-				url = `https://${subconverter}/sub?target=singbox&url=${encodeURIComponent(url)}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
+				url = `${subProtocol}://${subconverter}/sub?target=singbox&url=${encodeURIComponent(url)}&insert=false&config=${encodeURIComponent(subconfig)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
 				isBase64 = false;
 			}
 		}
@@ -1358,8 +1367,11 @@ https://github.com/cmliu/edgetunnel
 					}});
 				content = await response.text();
 			}
-			if (!_url.pathname.includes(`/${fakeUserID}`)) content = revertFakeInfo(content, userID, hostName, isBase64);
-			return content;
+
+			if (_url.pathname == `/${fakeUserID}`) return content;
+
+			return revertFakeInfo(content, userID, hostName, isBase64);
+
 		} catch (error) {
 			console.error('Error fetching content:', error);
 			return `Error fetching content: ${error.message}`;
@@ -1597,17 +1609,22 @@ function subAddresses(host,UUID,noTLS,newAddressesapi,newAddressescsv,newAddress
 				addressid = match[3] || address;
 			}
 
+			const httpPorts = ["8080","8880","2052","2082","2086","2095"];
+			if (!isValidIPv4(address) && port == "80") {
+				for (let httpPort of httpPorts) {
+					if (address.includes(httpPort)) {
+						port = httpPort;
+						break;
+					}
+				}
+			}
+			
 			let 伪装域名 = host ;
 			let 最终路径 = '/?ed=2560' ;
 			let 节点备注 = '';
+			const 协议类型 = atob(啥啥啥_写的这是啥啊);
 			
-			if(proxyhosts.length > 0 && (伪装域名.includes('.workers.dev') || 伪装域名.includes('pages.dev'))) {
-				最终路径 = `/${伪装域名}${最终路径}`;
-				伪装域名 = proxyhosts[Math.floor(Math.random() * proxyhosts.length)];
-				节点备注 = ` 已启用临时域名中转服务，请尽快绑定自定义域！`;
-			}
-
-			const vlessLink = `vless://${UUID}@${address}:${port}?encryption=none&security=&type=ws&host=${伪装域名}&path=${encodeURIComponent(最终路径)}#${encodeURIComponent(addressid + 节点备注)}`;
+			const vlessLink = `${协议类型}://${UUID}@${address}:${port}?encryption=none&security=&type=ws&host=${伪装域名}&path=${encodeURIComponent(最终路径)}#${encodeURIComponent(addressid + 节点备注)}`;
 	
 			return vlessLink;
 
@@ -1648,6 +1665,16 @@ function subAddresses(host,UUID,noTLS,newAddressesapi,newAddressescsv,newAddress
 			port = match[2] || port;
 			addressid = match[3] || address;
 		}
+
+		const httpsPorts = ["2053","2083","2087","2096","8443"];
+		if (!isValidIPv4(address) && port == "443") {
+			for (let httpsPort of httpsPorts) {
+				if (address.includes(httpsPort)) {
+					port = httpsPort;
+					break;
+				}
+			}
+		}
 		
 		let 伪装域名 = host ;
 		let 最终路径 = '/?ed=2560' ;
@@ -1666,7 +1693,7 @@ function subAddresses(host,UUID,noTLS,newAddressesapi,newAddressescsv,newAddress
 	}).join('\n');
 
 	let base64Response = responseBody; // 重新进行 Base64 编码
-	if(noTLS == 'true') base64Response += `\nnotlsresponseBody`;
+	if(noTLS == 'true') base64Response += `\n${notlsresponseBody}`;
 	return btoa(base64Response);
 }
 
@@ -1691,4 +1718,9 @@ async function sendMessage(type, ip, add_data = "") {
 			}
 		});
 	}
+}
+
+function isValidIPv4(address) {
+	const ipv4Regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+	return ipv4Regex.test(address);
 }
