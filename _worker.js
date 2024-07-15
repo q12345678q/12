@@ -1295,17 +1295,22 @@ https://github.com/cmliu/edgetunnel
 			return 'Error: fetch is not available in this environment.';
 		}
 
-		let newAddressesapi ;
-		let newAddressescsv ;
-		let newAddressesnotlsapi;
-		let newAddressesnotlscsv;
+		let newAddressesapi = [];
+		let newAddressescsv = [];
+		let newAddressesnotlsapi = [];
+		let newAddressesnotlscsv = [];
 
 		// 如果是使用默认域名，则改成一个workers的域名，订阅器会加上代理
-		if (hostName.includes(".pages.dev")){
+		if (hostName.includes(".workers.dev")){
+			noTLS = 'true';
+			fakeHostName = `${fakeHostName}.workers.dev`;
+			newAddressesnotlsapi = await getAddressesapi(addressesnotlsapi);
+			newAddressesnotlscsv = await getAddressescsv('FALSE');
+		} else if (hostName.includes(".pages.dev")){
 			fakeHostName = `${fakeHostName}.pages.dev`;
 		} else if (hostName.includes("worker") || hostName.includes("notls") || noTLS == 'true'){
 			noTLS = 'true';
-			fakeHostName = `${fakeHostName}.workers.dev`;
+			fakeHostName = `notls${fakeHostName}.net`;
 			newAddressesnotlsapi = await getAddressesapi(addressesnotlsapi);
 			newAddressesnotlscsv = await getAddressescsv('FALSE');
 		} else {
@@ -1343,6 +1348,7 @@ https://github.com/cmliu/edgetunnel
 			newAddressesapi = await getAddressesapi(addressesapi);
 			newAddressescsv = await getAddressescsv('TRUE');
 			url = `https://${hostName}/${fakeUserID}`;
+			if (hostName.includes("worker") || hostName.includes("notls") || noTLS == 'true') url += '?notls';
 			console.log(`虚假订阅: ${url}`);
 		} 
 
