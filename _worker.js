@@ -43,6 +43,7 @@ let ChatID ='';
 let proxyhosts = [];//本地代理域名池
 let proxyhostsURL = 'https://raw.githubusercontent.com/cmliu/CFcdnVmess2sub/main/proxyhosts';//在线代理域名池URL
 let RproxyIP = 'false';
+let go2Socks5s = [];
 export default {
 	/**
 	 * @param {import("@cloudflare/workers-types").Request} request
@@ -105,6 +106,13 @@ export default {
 			DLS = env.DLS || DLS;
 			BotToken = env.TGTOKEN || BotToken;
 			ChatID = env.TGID || ChatID; 
+			if( env.GO2SOCKS5 ) {
+				const go2Socks5 = env.GO2SOCKS5;
+				var addGo2Socks5 = go2Socks5.replace(/[\r\n]+/g, '\n').replace(/,+/g, '\n');
+				if (addGo2Socks5.charAt(0) == '\n') addGo2Socks5 = addGo2Socks5.slice(1);
+				if (addGo2Socks5.charAt(addGo2Socks5.length - 1) == '\n') addGo2Socks5 = addGo2Socks5.slice(0, addGo2Socks5.length - 1);
+				go2Socks5s = addGo2Socks5.split('\n');
+			}
 			const upgradeHeader = request.headers.get('Upgrade');
 			const url = new URL(request.url);
 			if (url.searchParams.has('sub') && url.searchParams.get('sub') !== '') sub = url.searchParams.get('sub');
@@ -345,6 +353,14 @@ async function vlessOverWSHandler(request) {
  * @returns {Promise<void>} 异步操作的 Promise
  */
 async function handleTCPOutBound(remoteSocket, addressType, addressRemote, portRemote, rawClientData, webSocket, vlessResponseHeader, log,) {
+	async function useSocks5Pattern(address) {
+		if ( go2Socks5s.includes(atob('YWxsIGlu')) ) return true;
+		return go2Socks5s.some(pattern => {
+			let regexPattern = pattern.replace(/\*/g, '.*');
+			let regex = new RegExp(`^${regexPattern}$`, 'i');
+			return regex.test(address);
+		});
+	}
 	/**
 	 * 连接远程服务器并写入数据
 	 * @param {string} address 要连接的地址
@@ -394,8 +410,10 @@ async function handleTCPOutBound(remoteSocket, addressType, addressRemote, portR
 		remoteSocketToWS(tcpSocket, webSocket, vlessResponseHeader, null, log);
 	}
 
+	let useSocks = false;
+	if( go2Socks5s.length > 0 && enableSocks ) useSocks = await useSocks5Pattern(addressRemote);
 	// 首次尝试连接远程服务器
-	let tcpSocket = await connectAndWrite(addressRemote, portRemote);
+	let tcpSocket = await connectAndWrite(addressRemote, portRemote, useSocks);
 
 	// 当远程 Socket 就绪时，将其传递给 WebSocket
 	// 建立从远程服务器到 WebSocket 的数据流，用于将远程服务器的响应发送回客户端
@@ -1248,9 +1266,12 @@ async function getVLESSConfig(userID, hostName, sub, UA, RproxyIP, _url) {
 			else return socks5Address;
 		});
 
+		let socks5List = '';
+		if( go2Socks5s.length > 0 && enableSocks ) socks5List = `SOCKS5（白名单）: \n  ${go2Socks5s.join('\n  ')}\n`
+
 		let 订阅器 = '';
 		if (!sub || sub == '') {
-			if (enableSocks) 订阅器 += `CFCDN（访问方式）: Socks5\n  ${newSocks5s.join('\n  ')}\n`;
+			if (enableSocks) 订阅器 += `CFCDN（访问方式）: Socks5\n  ${newSocks5s.join('\n  ')}\n${socks5List}`;
 			else if (!proxyIP || proxyIP =='') 订阅器 += `CFCDN（访问方式）: ProxyIP\n  ${proxyIPs.join('\n  ')}\n`;
 			else 订阅器 += `CFCDN（访问方式）: 无法访问, 需要您设置 proxyIP/PROXYIP ！！！\n`;
 			订阅器 += `\n您的订阅内容由 内置 addresses/ADD* 参数变量提供\n`;
@@ -1260,7 +1281,7 @@ async function getVLESSConfig(userID, hostName, sub, UA, RproxyIP, _url) {
 			if (addressesnotlsapi.length > 0) 订阅器 += `ADDNOTLSAPI（noTLS优选域名&IP 的 API）: \n  ${addressesnotlsapi.join('\n  ')}\n`;
 			if (addressescsv.length > 0) 订阅器 += `ADDCSV（IPTest测速csv文件 限速 ${DLS} ）: \n  ${addressescsv.join('\n  ')}\n`;
 		} else {
-			if (enableSocks) 订阅器 += `CFCDN（访问方式）: Socks5\n  ${newSocks5s.join('\n  ')}\n`;
+			if (enableSocks) 订阅器 += `CFCDN（访问方式）: Socks5\n  ${newSocks5s.join('\n  ')}\n${socks5List}`;
 			else if (!proxyIP || proxyIP =='') 订阅器 += `CFCDN（访问方式）: ProxyIP\n  ${proxyIPs.join('\n  ')}\n`;
 			else if (RproxyIP == 'true') 订阅器 += `CFCDN（访问方式）: 自动获取ProxyIP\n`;
 			else 订阅器 += `CFCDN（访问方式）: 无法访问, 需要您设置 proxyIP/PROXYIP ！！！\n`
