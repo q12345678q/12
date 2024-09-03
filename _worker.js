@@ -31,6 +31,7 @@ let noTLS = 'false';
 const expire = 4102329600;//2099-12-31
 let proxyIPs;
 let socks5s;
+let go2Socks5s = [];
 let addresses = [];
 let addressesapi = [];
 let addressesnotls = [];
@@ -43,7 +44,6 @@ let ChatID ='';
 let proxyhosts = [];//本地代理域名池
 let proxyhostsURL = 'https://raw.githubusercontent.com/cmliu/CFcdnVmess2sub/main/proxyhosts';//在线代理域名池URL
 let RproxyIP = 'false';
-let go2Socks5s = [];
 export default {
 	/**
 	 * @param {import("@cloudflare/workers-types").Request} request
