@@ -30,7 +30,9 @@ let fakeHostName ;
 let noTLS = 'false'; 
 const expire = 4102329600;//2099-12-31
 let proxyIPs;
-let socks5s;
+let socks5s = [
+	'*ttvnw.net'
+];
 let go2Socks5s = [];
 let addresses = [];
 let addressesapi = [];
