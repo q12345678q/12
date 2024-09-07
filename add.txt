@@ -1,6 +1,6 @@
-cf.090227.xyz#CF_US_cf
-ct.090227.xyz#CF_US_ct
-cmcc.090227.xyz#CF_US_cmcc
+cf.090227.xyz#CF_US_cf.090227.xyz
+ct.090227.xyz#CF_US_ct.090227.xyz
+cmcc.090227.xyz#CF_US_cmcc.090227.xyz
 shopify.com#CF_US_shopify.com
 time.is#CF_US_time.is
 icook.hk#CF_US_icook.hk
