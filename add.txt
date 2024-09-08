@@ -11,6 +11,7 @@ malaysia.com#CF_US_malaysia.com
 russia.com#CF_US_russia.com
 singapore.com#CF_US_singapore.com
 skk.moe#CF_US_skk.moe
+www.visa.cn#CF_US_www.visa.cn
 www.visa.com.sg#CF_US_www.visa.com.sg
 www.visa.com.hk#CF_US_www.visa.com.hk
 www.visa.com.tw#CF_US_www.visa.com.tw
