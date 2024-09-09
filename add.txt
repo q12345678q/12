@@ -1,12 +1,12 @@
 cf.090227.xyz#cf.090227.xyz
 ct.090227.xyz#ct.090227.xyz
 cmcc.090227.xyz#cmcc.090227.xyz
-time.is#CF_US_time.is
-ip.sb#CF_US_ip.sb
 wto.org#CF_US_wto.org
-visa.cn#CF_US_visa.cn
 cloudflare.com#CF_US_cloudflare.com
 cf.com#CF_US_cf.com
+time.is#CF_US_time.is
+ip.sb#CF_US_ip.sb
+visa.cn#CF_US_visa.cn
 cfip.xxxxxxxx.tk#CF_US_OTC提供维护官方优选
 bestcf.onecf.eu.org#CF_US_Mingyu提供维护官方优选
 cf.zhetengsha.eu.org#CF_US_小一提供维护官方优选
