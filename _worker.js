@@ -38,11 +38,11 @@ let addresses = [
 	//当sub为空时启用本地优选域名/优选IP，若不带端口号 TLS默认端口为443，#号后为备注别名
 	/*
 	'Join.my.Telegram.channel.CMLiussss.to.unlock.more.premium.nodes.cf.090227.xyz#加入我的频道t.me/CMLiussss解锁更多优选节点',
-	'visa.cn:443',
-	'www.visa.com:8443',
-	'cis.visa.com:2053',
-	'africa.visa.com:2083',
-	'www.visa.com.sg:2087',
+	'086181.xyz:443',
+	'cf.090227.xyz:8443',
+	'www.c333.net:2053',
+	'www.888dyy.cc:2083',
+	'cloudflare.182682.xyz:2087',
 	'www.visaeurope.at:2096',
 	'www.visa.com.mt:8443',
 	'qa.visamiddleeast.com',
