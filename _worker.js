@@ -149,48 +149,8 @@ export default {
 				switch (url.pathname.toLowerCase()) {
 				case '/':
 					if (env.URL302) return Response.redirect(env.URL302, 302);
-					else if (env.URL) {
-						const URLs = await ADD(env.URL);
-						const fullURL = URLs[Math.floor(Math.random() * URLs.length)];
-
-						// 解析目标 URL
-						let parsedURL = new URL(fullURL);
-
-						// 提取并可能修改 URL 组件
-						let URLProtocol = parsedURL.protocol.slice(0, -1) || 'https';
-						let URLHostname = parsedURL.hostname;
-						let URLPathname = parsedURL.pathname;
-						let URLSearch = parsedURL.search;
-
-						// 处理 pathname
-						if (URLPathname.charAt(URLPathname.length - 1) == '/') {
-							URLPathname = URLPathname.slice(0, -1);
-						}
-						URLPathname += url.pathname;
-
-						// 构建新的 URL
-						let newURL = `${URLProtocol}://${URLHostname}${URLPathname}${URLSearch}`;
-
-						// 反向代理请求
-						let response = await fetch(newURL);
-
-						// 创建新的响应
-						let newResponse = new Response(response.body, {
-							status: response.status,
-							statusText: response.statusText,
-							headers: response.headers
-						});
-
-						// 添加自定义头部，包含 URL 信息
-						//newResponse.headers.set('X-Proxied-By', 'Cloudflare Worker');
-						//newResponse.headers.set('X-Original-URL', fullURL);
-						newResponse.headers.set('X-New-URL', newURL);
-
-						return newResponse;
-
-					} else {
-						return new Response(JSON.stringify(request.cf, null, 4), { status: 200 });
-					}
+					else if (env.URL) return await proxyURL(env.URL, url);
+					else return new Response(JSON.stringify(request.cf, null, 4), { status: 200 });
 				case `/${fakeUserID}`:
 					const fakeConfig = await getVLESSConfig(userID, request.headers.get('Host'), sub, 'CF-Workers-SUB', RproxyIP, url);
 					return new Response(`${fakeConfig}`, { status: 200 });
@@ -245,48 +205,8 @@ export default {
 				}
 				default:
 					if (env.URL302) return Response.redirect(env.URL302, 302);
-					else if (env.URL) {
-						const URLs = await ADD(env.URL);
-						const fullURL = URLs[Math.floor(Math.random() * URLs.length)];
-
-						// 解析目标 URL
-						let parsedURL = new URL(fullURL);
-
-						// 提取并可能修改 URL 组件
-						let URLProtocol = parsedURL.protocol.slice(0, -1) || 'https';
-						let URLHostname = parsedURL.hostname;
-						let URLPathname = parsedURL.pathname;
-						let URLSearch = parsedURL.search;
-
-						// 处理 pathname
-						if (URLPathname.charAt(URLPathname.length - 1) == '/') {
-							URLPathname = URLPathname.slice(0, -1);
-						}
-						URLPathname += url.pathname;
-
-						// 构建新的 URL
-						let newURL = `${URLProtocol}://${URLHostname}${URLPathname}${URLSearch}`;
-
-						// 反向代理请求
-						let response = await fetch(newURL);
-
-						// 创建新的响应
-						let newResponse = new Response(response.body, {
-							status: response.status,
-							statusText: response.statusText,
-							headers: response.headers
-						});
-
-						// 添加自定义头部，包含 URL 信息
-						//newResponse.headers.set('X-Proxied-By', 'Cloudflare Worker');
-						//newResponse.headers.set('X-Original-URL', fullURL);
-						newResponse.headers.set('X-New-URL', newURL);
-
-						return newResponse;
-
-					} else {
-						return new Response('不用怀疑！你UUID就是错的！！！', { status: 404 });
-					}
+					else if (env.URL) return await proxyURL(env.URL, url);
+					else return new Response('不用怀疑！你UUID就是错的！！！', { status: 404 });
 				}
 			} else {
 				proxyIP = url.searchParams.get('proxyip') || proxyIP;
@@ -1279,6 +1199,46 @@ async function ADD(envadd) {
 	const add = addtext.split(',');
 	
 	return add;
+}
+
+async function proxyURL(proxyURL, url) {
+	const URLs = await ADD(proxyURL);
+	const fullURL = URLs[Math.floor(Math.random() * URLs.length)];
+
+	// 解析目标 URL
+	let parsedURL = new URL(fullURL);
+	console.log(parsedURL);
+	// 提取并可能修改 URL 组件
+	let URLProtocol = parsedURL.protocol.slice(0, -1) || 'https';
+	let URLHostname = parsedURL.hostname;
+	let URLPathname = parsedURL.pathname;
+	let URLSearch = parsedURL.search;
+
+	// 处理 pathname
+	if (URLPathname.charAt(URLPathname.length - 1) == '/') {
+		URLPathname = URLPathname.slice(0, -1);
+	}
+	URLPathname += url.pathname;
+
+	// 构建新的 URL
+	let newURL = `${URLProtocol}://${URLHostname}${URLPathname}${URLSearch}`;
+
+	// 反向代理请求
+	let response = await fetch(newURL);
+
+	// 创建新的响应
+	let newResponse = new Response(response.body, {
+		status: response.status,
+		statusText: response.statusText,
+		headers: response.headers
+	});
+
+	// 添加自定义头部，包含 URL 信息
+	//newResponse.headers.set('X-Proxied-By', 'Cloudflare Worker');
+	//newResponse.headers.set('X-Original-URL', fullURL);
+	newResponse.headers.set('X-New-URL', newURL);
+
+	return newResponse;
 }
 
 function checkSUB(host) {
